@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><title>git拉取远程分支,更新代码,推送到远程分支</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<h2 id="git拉取远程分支更新代码推送到远程分支">git拉取远程分支,更新代码,推送到远程分支</h2>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs awk"><div class="hljs-line">git init    <span class="hljs-regexp">//</span>初始化一个空的git本地仓库
+</div><div class="hljs-line">git remote add origin https:<span class="hljs-regexp">//gi</span>t.coding.net<span class="hljs-regexp">/inggqm/</span>Study.git   <span class="hljs-regexp">//</span>添加远程仓库(与远程仓库建立联系)
+</div><div class="hljs-line">git fetch origin hanhu  <span class="hljs-regexp">//</span>把远程分支hanhu拉取到本地
+</div><div class="hljs-line">git checkout -b hanhu   <span class="hljs-regexp">//</span>在本地创建分支hanhu，并切换到该分支
+</div><div class="hljs-line">git pull origin hanhu   <span class="hljs-regexp">//</span>将远程分支hanhu上的内容都拉取到本地
+</div><div class="hljs-line">            <span class="hljs-regexp">//</span>修改或添加文件内容
+</div><div class="hljs-line">git add . &amp;&amp; git commit -m <span class="hljs-string">'提交内容的简述'</span>     <span class="hljs-regexp">//</span>将修改后的文件同步到本地仓库
+</div><div class="hljs-line">git push origin hanhu   <span class="hljs-regexp">//</span>将本地仓库更新的内容同步到远程仓库
+</div></code></pre></div></body></html>

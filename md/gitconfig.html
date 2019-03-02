@@ -1,0 +1,150 @@
+<!DOCTYPE html><html><head><title>git全局配置的设置、分支的使用</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue",Arial,"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,Song,sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<div id="top"></div>
+
+
+
+
+
+<h3 id="git全局配置的设置分支的使用">git全局配置的设置、分支的使用</h3>
+
+
+
+<h4 id="设置name和email">设置name和email：</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs stylus"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git config --global user<span class="hljs-selector-class">.name</span> <span class="hljs-string">"your name"</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>git config --global user<span class="hljs-selector-class">.email</span> <span class="hljs-string">"abc@sina.com"</span>
+</div></code></pre>
+
+
+
+<h4 id="查看全局配置">查看全局配置：</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs lua"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git <span class="hljs-built_in">config</span> <span class="hljs-comment">--list</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>git <span class="hljs-built_in">config</span> <span class="hljs-comment">--global --list//或者这个</span>
+</div></code></pre>
+
+<blockquote>
+  <p><span style="background:yellow">注意：git config –list 完后需要按 q 键才能返回</span></p>
+</blockquote>
+
+<hr>
+
+
+
+<h4 id="只查看某一项配置">只查看某一项配置：</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs applescript"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git config user.<span class="hljs-built_in">name</span>
+</div></code></pre>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs arduino"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git <span class="hljs-built_in">config</span> user.email
+</div></code></pre>
+
+<blockquote>
+  <p>通过修改配置文件的方式来修改name和Email配置：</p>
+  
+  <blockquote>
+    <p>文件目录：C:/Users/{user}/.gitconfig <br>
+    打开文件进行修改即可</p>
+  </blockquote>
+</blockquote>
+
+
+
+<h4 id="删除相应配置">删除相应配置：</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs brainfuck"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-comment">git</span> <span class="hljs-comment">config</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">global</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">unset</span> <span class="hljs-comment">user</span><span class="hljs-string">.</span><span class="hljs-comment">name</span>
+</div></code></pre>
+
+
+
+<h4 id="git-push-origin-master-时每次都要输入用户名和密码解决方案最简">git push origin master 时，每次都要输入用户名和密码，解决方案（最简）：</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs llvm"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git config --<span class="hljs-keyword">global</span> credential.helper <span class="hljs-keyword">store</span>
+</div></code></pre>
+
+<blockquote>
+  <p>输入上方这一句后，第一次提交还需要输入验证信息，以后都不用了（因为第一次输入的信息会被保存到一个文件中，下次直接调用了） <br>
+  <span style="background:yellow">这一步会在用户目录下生成文件.git-credential记录用户名密码的信息。</span> <br>
+  <a href="https://blog.csdn.net/harryptter/article/details/75452016" target="_blank">git push 无需验证的详细原理</a></p>
+</blockquote>
+
+<hr>
+
+
+
+<h4 id="创建本地分支并推送到远程仓库">创建本地分支并推送到远程仓库</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs stylus"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git checkout -<span class="hljs-selector-tag">b</span> local_branch<span class="hljs-comment">//创建本地分支local_branch</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>git push origin local_branch:local_branch<span class="hljs-comment">//将本地分支local_branch(前一个)推送到远程仓库，并命名为local_branch（后一个，也可以任意命名）</span>
+</div></code></pre>
+
+
+
+<h4 id="查看远程分支">查看远程分支</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs stylus"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git branch -<span class="hljs-selector-tag">a</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>git branch<span class="hljs-comment">//这是查看本地分支</span>
+</div></code></pre>
+
+
+
+<h4 id="删除远程分支">删除远程分支</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs maxima"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git <span class="hljs-built_in">push</span> <span class="hljs-built_in">origin</span> -d branch_name
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>git <span class="hljs-built_in">push</span> <span class="hljs-built_in">origin</span> --<span class="hljs-built_in">delete</span> branch_name//或者用这个，完整<span class="hljs-built_in">delete</span>时是两个横杠
+</div></code></pre>
+
+
+
+<h5 id="也可以推送一个空分支到要删除的远程分支即用空分支覆盖远程分支也可以达到删除远程分支的目的">也可以推送一个空分支到要删除的远程分支(即用空分支覆盖远程分支)，也可以达到删除远程分支的目的</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs maxima"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git <span class="hljs-built_in">push</span> <span class="hljs-built_in">origin</span> : branch_name
+</div></code></pre>
+
+
+
+<h4 id="切换当前操作的分支">切换当前操作的分支</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs nginx"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-attribute">git</span> checkout branch_name
+</div></code></pre>
+
+
+
+<h4 id="拉取远程指定分支代码">拉取远程指定分支代码</h4>
+
+<p><a href="https://blog.csdn.net/weixin_39800144/article/details/78205617" target="_blank">git clone 指定分支 拉代码</a></p>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs crmsh"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>git <span class="hljs-keyword">clone</span> <span class="hljs-title">-b</span> branch_name http://<span class="hljs-number">10.1</span>.<span class="hljs-number">1.11</span>/service/tmall-service.git
+</div></code></pre>
+
+<hr>
+
+<p><a class="btn btn-primary" style="margin-top:10px" href="#top">Top</a></p></div></body></html>

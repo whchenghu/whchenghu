@@ -1,0 +1,1044 @@
+<!DOCTYPE html><html><head><title>ASP.NET CORE 基础</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue",Arial,"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,Song,sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<div id="Top"></div>
+
+
+
+<h3 id="aspnet-core-基础">ASP.NET CORE 基础</h3>
+
+<p><a href="https://www.cnblogs.com/qinxingnet/p/5837590.html" target="_blank">基础介绍</a></p>
+
+<blockquote>
+  <p>MVC</p>
+  
+  <blockquote>
+    <p>Model:业务逻辑和业务数据 <br>
+    View:数据 <br>
+    Controller:接收请求</p>
+  </blockquote>
+  
+  <p>请求流程：接收请求-&gt;Controller-&gt;传递请求数据-&gt;Model-&gt;返回处理请求-&gt;Controller-&gt;呈现数据-&gt;View-&gt;返回结果</p>
+</blockquote>
+
+
+
+<h5 id="startupcs解析启动配置文件">Startup.cs解析：（启动配置文件）</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Collections.Generic;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">using</span> System.Threading.Tasks;
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-keyword">using</span> CoreBB.Web.Models;
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Authentication.Cookies;
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Builder;
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Hosting;
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Http;
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><span class="hljs-keyword">using</span> Microsoft.Extensions.DependencyInjection;
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">CoreBB.Web</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Startup</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        <span class="hljs-comment">// 此方法由运行时调用。使用此方法将服务添加到容器中。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConfigureServices</span>(<span class="hljs-params">IServiceCollection services</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            services.AddMvc();<span class="hljs-comment">//加载Mvc组件</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)<span class="hljs-comment">//加载身份验证服务集合扩展组件:基于Cookie的身份验证处理程序</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>                .AddCookie(option =&gt;
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>                {
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>                    option.LoginPath = <span class="hljs-string">"/User/LogIn"</span>;<span class="hljs-comment">//默认登录路径/User/LogIn</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>                    option.AccessDeniedPath = <span class="hljs-string">"/Error/AccessDenied"</span>;<span class="hljs-comment">//当访问被拒绝时的路径(未经授权的访问将被重定向到/Error/AccessDenied)无权访问资源的授权用户</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>                    option.Cookie.SecurePolicy = CookieSecurePolicy.Always;<span class="hljs-comment">//安全始终标记为真</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>                });
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>            services.AddDbContext&lt;CoreBBContext&gt;();<span class="hljs-comment">//将CoreBBContext类注册到ASP.NET Core的依赖注入容器</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>        <span class="hljs-comment">// 此方法由运行时调用。使用此方法配置HTTP请求管道。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Configure</span>(<span class="hljs-params">IApplicationBuilder app, IHostingEnvironment env</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span>            app.UseExceptionHandler(<span class="hljs-string">"/Error/Index"</span>);<span class="hljs-comment">//使用异常处理程序扩展(默认的错误处理路径是/Error/Index)内部异常，显示相应的错误信息给用户</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>            app.UseStaticFiles();<span class="hljs-comment">//允许使用静态文件（根文件夹是wwwroot）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">35.</span>            app.UseAuthentication();<span class="hljs-comment">//启用身份验证功能组件</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">36.</span>            app.UseMvcWithDefaultRoute();<span class="hljs-comment">//启用带默认路径的Mvc方法组件（默认的URL路由模板是{controller=Home}/{action=Index}/{id?}）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">37.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">38.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">39.</span>}
+</div></code></pre>
+
+<blockquote>
+  <p>控制器：</p>
+  
+  <blockquote>
+    <p>是一个类 <br>
+    命名以Conttroller结尾 <br>
+    如果控制器命名不以Controller结尾，需要类上添加特性“[Controller]”，此时框架也会认为它是个控制器类 <br>
+    [NonController]：控制器前面有这个特性时，它就不再是控制器了 <br>
+    需要继承Controller类</p>
+  </blockquote>
+  
+  <p>用户请求如何映射到控制器方法上的：</p>
+  
+  <blockquote>
+    <p>默认路由规则：域名/{Controller}/{Action}/{id?}</p>
+  </blockquote>
+  
+  <p>如果控制器中的方法没有对应的视图：return Content(“content”); <br>
+  有对应视图：return View();</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Mvc;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">using</span> System.Collections.Generic;
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-keyword">using</span> System.Threading.Tasks;
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            <span class="hljs-keyword">return</span> Content(<span class="hljs-string">"Han"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            <span class="hljs-comment">//return View();</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>}
+</div></code></pre>
+
+<blockquote>
+  <p>数据形式：</p>
+  
+  <blockquote>
+    <p>QueryString(查询字符串：通过地址栏，键值对形式)url问号后面的字符串 <br>
+    Form(表单) <br>
+    Cookie <br>
+    Session <br>
+    Header</p>
+  </blockquote>
+</blockquote>
+
+
+
+<h5 id="数据接收的两种方式两个对象">数据接收的两种方式：（两个对象）</h5>
+
+<ul><li><p>HttpRequest</p></li>
+<li><p>HttpContext</p></li>
+<li><p>还有一种数据绑定的方式也可以（绑定到控制器的参数上）</p></li>
+</ul>
+
+<blockquote>
+  <p>接收数据：HttpRequest:他是用户请求对象 <br>
+  HttpRequest是一个对象 <br>
+  HttpRequest提供获取请求数据的属性：Cookie,Headers,Query,Forms <br>
+  HttpRequest是无法获取Session数据的 <br>
+  方法中直接写：var str=Request.Query(“key”);Console.WriteLine(str);</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            <span class="hljs-keyword">var</span> str=Request.Query[<span class="hljs-string">"name"</span>];
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-comment">//Request.Form[""];//获取表单数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-comment">//Request.Cookies[""];//获取Cookie数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-keyword">return</span> Content(<span class="hljs-string">$"Hello <span class="hljs-subst">{str}</span>"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>}
+</div></code></pre>
+
+<blockquote>
+  <p>URL:<a href="https://localhost:44380/test/index?name=han" target="_blank">https://localhost:44380/test/index?name=han</a> <br>
+  若不传入也不会出错</p>
+</blockquote>
+
+<hr>
+
+<blockquote>
+  <p>HttpContext:是用户请求上下文对象： <br>
+  提供Session属性获取Session对象：</p>
+  
+  <blockquote>
+    <p>Session.Set设置（Set只允许设置byte[]类型）（HttpContext.Session.SetString) <br>
+    Session.Remove移除 <br>
+    Session.TryGetValue获取数据（HttpContext.Session.getString） <br>
+    <span style="background:yellow">使用Session的前提：在Startup.cs文件中添加并启用Session <br>
+    在ConfigureServices()方法中添加：services.AddSession();//将Session服务添加到容器中 <br>
+    在Configure()方法中添加：app.UseSession();//运行时启用Session（不能放在app.UseMvc()下面）</span></p>
+  </blockquote>
+</blockquote>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            HttpContext.Session.SetString(<span class="hljs-string">"name"</span>, <span class="hljs-string">"abcdef"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            HttpContext.Session.SetInt32(<span class="hljs-string">"age"</span>, <span class="hljs-number">32</span>);<span class="hljs-comment">//设置</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            HttpContext.Session.Remove(<span class="hljs-string">"age"</span>);<span class="hljs-comment">//移除</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-keyword">string</span> str=HttpContext.Session.GetString(<span class="hljs-string">"name"</span>);<span class="hljs-comment">//获取</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            <span class="hljs-keyword">int</span>? age = HttpContext.Session.GetInt32(<span class="hljs-string">"age"</span>);<span class="hljs-comment">//此时获取不到了</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            <span class="hljs-comment">//var age = HttpContext.Session.GetInt32("age");</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            <span class="hljs-keyword">return</span> Content(str+<span class="hljs-string">"---"</span>+age);
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>数据绑定： <br>
+  把用户请求的数据绑定到控制器方法的参数上 <br>
+  支持简单类型和自定义类型 <br>
+  绑定规则时请求数据名称和参数名称一致</p>
+  
+  <ul><li><p>查询字符串Key名称和参数一致</p></li>
+  <li><p>Form表单名称和参数一致…..</p></li>
+  </ul>
+  
+  <p><span style="color:red">数据的来源还是从URL的问号后面的键值对获取</span> <br>
+  模型类也可以传递数据（它也是从url中获取数据的）</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)<span class="hljs-comment">//从url中获取数据</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            <span class="hljs-keyword">return</span> Content(<span class="hljs-string">$"Hello <span class="hljs-subst">{name}</span>"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Say</span>(<span class="hljs-params">TestModel model</span>)<span class="hljs-comment">//从url中获取数据</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-keyword">return</span> Content(<span class="hljs-string">$"nihao <span class="hljs-subst">{model.Name}</span>"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">TestModel</span><span class="hljs-comment">//可以写入到TestModel.cs模型类中</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <ol><li rel="1"><p>如果同一个数据在多个数据源里都出现了，但是只想取特定的数据源的数据怎么办？ <br>
+  上句：即在多个地方（例如url和session都有name的赋值）都出现了同名的参数值，但我只想获取其中某一个</p></li>
+  <li rel="2"><p>是不是所有的数据都可以自动绑定到方法参数上？ <br>
+  <strong>框架有默认优先级进行获取 </strong></p></li>
+  </ol>
+</blockquote>
+
+
+
+<h4 id="解决上述问题特性">解决上述问题：特性</h4>
+
+<ul><li><p>控制器特性:当前定义的类作为一个控制器或者当前控制器作为一个普通类：[Controller]   [NonController]</p></li>
+<li><p>方法参数特性：</p>
+
+<blockquote>
+  <ul>
+  <li><p>FromHeader,（Headers）</p></li>
+  <li><p>FromRoute(路由数据),</p></li>
+  <li><p>FromForm(请求体),</p></li>
+  <li><p>FromBody(表单数据),</p></li>
+  <li><p>FromQuery(查询字符串),</p></li>
+  <li><p>FromServices(服务注册)</p></li></ul>
+</blockquote></li>
+<li><p>特性参数：</p></li>
+<li><p>通过特性修饰参数来影响绑定逻辑</p></li>
+<li><p>灵活可扩展</p></li>
+<li><p><strong>可自定义特性</strong></p></li>
+</ul>
+
+<p>只从url中获取name值的来源</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Say</span>(<span class="hljs-params">[FromQuery] <span class="hljs-keyword">string</span> name</span>)<span class="hljs-comment">//从url中获取数据</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-keyword">return</span> Content(<span class="hljs-string">$"nihao <span class="hljs-subst">{name}</span>"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>}
+</div></code></pre>
+
+<p>Test.index.cshtml</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs xml"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"/test/say?name=bbb"</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"post"</span>&gt;</span><span class="hljs-comment">&lt;!--此处url中name值是特性指定获取的对象--&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"name"</span>/&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"提交"</span> /&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</div></code></pre>
+
+<blockquote>
+  <ul><li><p>从远程服务绑定数据</p></li>
+  <li><p>从缓存绑定数据</p></li>
+  <li><p>Anywhere  Anydata</p></li>
+  </ul>
+</blockquote>
+
+<hr>
+
+<blockquote>
+  <p>函数签名：</p>
+  
+  <blockquote>
+    <p>函数：</p>
+    
+    <ul><li><p>名称：用于映射</p></li>
+    <li><p>参数：用于接收数据</p></li>
+    <li><p>返回值：用于返回结果</p></li>
+    </ul>
+  </blockquote>
+</blockquote>
+
+
+
+<h5 id="结果表达形式返回值类型">结果表达形式：（返回值类型）</h5>
+
+<p>动作结果接口：IActionResult</p>
+
+<ul><li><p>具体实现：</p></li>
+<li><p>JsonResult：返回Json结构数据</p></li>
+<li><p>RedirectResult：跳转到新地址</p></li>
+<li><p>FileResult：返回文件</p></li>
+<li><p>ViewResult：返回视图页面</p></li>
+<li><p>ContentResult：文本内容</p></li>
+</ul>
+
+<table><tbody><tr style="font-weight:bold">  <td align="left">类型</td>  <td align="right">实例化对象</td>  <td align="center">封装方法(框架提供的简便方法)</td></tr><tr>  <td align="left">Json结果</td>  <td align="right">JsonResult</td>  <td align="center">Json(Object)</td></tr><tr>  <td align="left">跳转</td>  <td align="right">RedirectResult</td>  <td align="center">Redirect(URL)</td></tr><tr>  <td align="left">文件</td>  <td align="right">FileResult</td>  <td align="center">File()</td></tr><tr>  <td align="left">视图</td>  <td align="right">ViewResult</td>  <td align="center">View()</td></tr><tr>  <td align="left">文本</td>  <td align="right">ContentResult</td>  <td align="center">Content(“”)</td></tr></tbody></table>
+
+<p>实例化对象实例:</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            JsonResult result = <span class="hljs-keyword">new</span> JsonResult(<span class="hljs-keyword">new</span> { name = <span class="hljs-string">"zhangsan"</span> });<span class="hljs-comment">//需要实例化对象后再使用</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            <span class="hljs-keyword">return</span> result;
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>}
+</div></code></pre>
+
+<p>结果:</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs json"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>{<span class="hljs-attr">"name"</span>:<span class="hljs-string">"zhangsan"</span>}
+</div></code></pre>
+
+<p>封装方法(简化实例化的复杂度):</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            <span class="hljs-keyword">return</span> Json(<span class="hljs-keyword">new</span> { name = <span class="hljs-string">"zhanfsan"</span> });<span class="hljs-comment">//直接使用了</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>}
+</div></code></pre>
+
+<blockquote>
+  <ul><li><p>默认的视图查找路径:views/{Controller}/{Action}.cshtml</p></li>
+  <li><p>指定视图查找路径:View(“视图路径”);</p>
+  
+  <blockquote>
+    <p>return View(“~/Views/Home/a.cshtml”);</p>
+  </blockquote></li>
+  </ul>
+  
+  <p>如果方法逻辑中涉及到I/O操作的话,最好返回值类型(结果形式):Task&lt; IActionResult&gt;</p>
+  
+  <blockquote>
+    <p>public Task&lt; IActionResult&gt; Test(){……..}</p>
+  </blockquote>
+</blockquote>
+
+<hr>
+
+<blockquote>
+  <p>视图引擎:Razor:将c#和html的整合</p>
+  
+  <blockquote>
+    <ol><li rel="1"><p>数据传递</p></li>
+    <li rel="2"><p>数据绑定</p></li>
+    </ol>
+  </blockquote>
+</blockquote>
+
+
+
+<h5 id="1-数据传递">1. 数据传递</h5>
+
+<table><tbody><tr style="font-weight:bold">  <td align="left">ViewData</td>  <td align="right">ViewBag</td>  <td align="center">TempData</td>  <td>Model</td>  <td>Session</td>  <td>Cache</td></tr></tbody></table>
+
+<table><tbody><tr style="font-weight:bold">  <td align="left">ViewData</td>  <td align="right">ViewBag</td></tr><tr>  <td align="left">键值对</td>  <td align="right">动态类型</td></tr><tr>  <td align="left">索引器</td>  <td align="right">它底层是对ViewData的封装</td></tr><tr>  <td align="left">支持任意类型</td>  <td align="right">动态属性</td></tr></tbody></table>
+
+<blockquote>
+  <p>数据绑定:</p>
+  
+  <blockquote>
+    <p>Razor语法: <br>
+    @表示c#代码块或语句 <br>
+    @* 注释 *@ <br>
+    c#代码可与html混合</p>
+  </blockquote>
+</blockquote>
+
+<p>设置值:</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span>:<span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            ViewData[<span class="hljs-string">"name"</span>] = <span class="hljs-string">"zhangsan"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            ViewBag.name2 = <span class="hljs-string">"lisi"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>}
+</div></code></pre>
+
+<p>显示值:</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs dts"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-params">&lt;p&gt;</span>@ViewData[<span class="hljs-string">"name"</span>]<span class="hljs-params">&lt;/p&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-params">&lt;p&gt;</span>@ViewBag.name2<span class="hljs-params">&lt;/p&gt;</span>
+</div></code></pre>
+
+<p>设置列表数据:</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs processing"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>namespace myConsole8.Controllers
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    <span class="hljs-keyword">public</span> class Test:Controller
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        <span class="hljs-keyword">public</span> IActionResult Index()
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            <span class="hljs-comment">//传递列表数据（数据库中获取）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            List&lt;string&gt; <span class="hljs-built_in">str</span> = <span class="hljs-keyword">new</span> List&lt;string&gt;();
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-built_in">str</span>.Add(<span class="hljs-string">"one"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-built_in">str</span>.Add(<span class="hljs-string">"one2"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            <span class="hljs-built_in">str</span>.Add(<span class="hljs-string">"one3"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-built_in">str</span>.Add(<span class="hljs-string">"one4"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            <span class="hljs-built_in">str</span>.Add(<span class="hljs-string">"one5"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            ViewBag.<span class="hljs-built_in">str</span> = <span class="hljs-built_in">str</span>;<span class="hljs-comment">//将列表数据绑定到ViewBag中</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>}
+</div></code></pre>
+
+<p>循环输出:</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs stata"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>&lt;ul&gt;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>@<span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> ViewBag.str)<span class="hljs-comment">//循环输出数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>   &lt;<span class="hljs-keyword">li</span>&gt;@item&lt;/<span class="hljs-keyword">li</span>&gt;
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>&lt;/ul&gt;
+</div></code></pre>
+
+<blockquote>
+  <p>表单与数据绑定</p>
+  
+  <blockquote>
+    <p>表单的使用:</p>
+    
+    <blockquote>
+      <ol><li rel="1"><p>传统Html方式</p></li>
+      <li rel="2"><p>HtmlHelper</p></li>
+      </ol>
+    </blockquote>
+  </blockquote>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs xml"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"/test/checkuser"</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"post"</span>&gt;</span><span class="hljs-comment">&lt;!--1--&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>   Name: <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"name"</span>/&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>   Password:<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"password"</span>/&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    Name:@Html.TextBox("name")<span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span><span class="hljs-comment">&lt;!--2--&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    Password:@Html.Password("password")<span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>   <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"提交"</span> /&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</div></code></pre>
+
+<p>Test.CheckUser方法获取数据:</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">CheckUser</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name,<span class="hljs-keyword">string</span> password,<span class="hljs-keyword">string</span> name2,<span class="hljs-keyword">string</span> password2</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>            <span class="hljs-keyword">return</span> Content(<span class="hljs-string">$"<span class="hljs-subst">{name}</span>+<span class="hljs-subst">{password}</span>+<span class="hljs-subst">{name2}</span>+<span class="hljs-subst">{password2}</span>"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>        }
+</div></code></pre>
+
+<p>设置默认值:</p>
+
+<ul><li><p>Test.Index方法在呈现视图之前设置默认数据</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs aspectj"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">public</span> <span class="hljs-function">IActionResult <span class="hljs-title">Index</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>            ViewData[<span class="hljs-string">"name"</span>] = <span class="hljs-string">"zhangsan"</span>;<span class="hljs-comment">//设置数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>            <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">View</span><span class="hljs-params">()</span></span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>        }
+</div></code></pre>
+
+<ul><li><p>显示数据:</p></li>
+<li><p>value=”@ViewBag.name”</p></li>
+<li><p>或者value=”@ViewData[“name”]”</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs excel"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-built_in">Na</span><span class="hljs-symbol">me:</span> &lt;input <span class="hljs-built_in">type</span>=<span class="hljs-string">"text"</span> name=<span class="hljs-string">"name"</span> <span class="hljs-built_in">value</span>=<span class="hljs-string">"@ViewBag.name"</span>/&gt;&lt;br&gt;
+</div></code></pre>
+
+<ul><li><p>Select数据初始化:</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs zephir"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">public</span> IActionResult Index()
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>            <span class="hljs-keyword">List</span>&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-keyword">list</span> = <span class="hljs-keyword">new</span> <span class="hljs-keyword">List</span>&lt;<span class="hljs-keyword">int</span>&gt;();
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>            <span class="hljs-keyword">list</span>.Add(<span class="hljs-number">1</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>            <span class="hljs-keyword">list</span>.Add(<span class="hljs-number">11</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>            <span class="hljs-keyword">list</span>.Add(<span class="hljs-number">111</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>            <span class="hljs-keyword">list</span>.Add(<span class="hljs-number">1111</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            <span class="hljs-keyword">list</span>.Add(<span class="hljs-number">11111</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            ViewBag.<span class="hljs-keyword">list</span> = <span class="hljs-keyword">list</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        }
+</div></code></pre>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>&lt;<span class="hljs-keyword">select</span>&gt;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    @<span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> ViewBag.list)
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>        &lt;option <span class="hljs-keyword">value</span>=<span class="hljs-string">""</span>&gt;@i&lt;/option&gt;
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>&lt;/<span class="hljs-keyword">select</span>&gt;
+</div></code></pre>
+
+<hr>
+
+
+
+<h5 id="htmlhelper方式">HtmlHelper方式:</h5>
+
+<ul><li><p>提供方法的重载:@Html.TextBox(name,value,format,htmlattributes)</p></li>
+<li><p>四个值的含义:表单名称,表单的值,格式化的方式,扩充html的属性</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs javascript"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>Name:@Html.TextBox(<span class="hljs-string">"name2"</span>,(string)ViewBag.name,<span class="hljs-literal">null</span>,<span class="hljs-keyword">new</span> { style=<span class="hljs-string">"color:red"</span>})&lt;br&gt;<span class="xml"><span class="hljs-comment">&lt;!--2--&gt;</span></span>
+</div></code></pre>
+
+<blockquote>
+  <p>特定类型:dynamic</p>
+</blockquote>
+
+
+
+<h5 id="使用model的方式传递数据">使用Model的方式传递数据</h5>
+
+<blockquote>
+  <p>视图中的Model:</p>
+  
+  <ul><li><p>视图提供Model属性</p></li>
+  <li><p>Model是一个动态类型,类型取决于传递数据类型</p></li>
+  </ul>
+  
+  <p>通过View(Object)传递模型数据 <br>
+  强类型视图:（确定类型）</p>
+  
+  <ul><li><p>强类型Model是一个设计时就能确定具体数据类型,而不是运行时确定</p></li>
+  <li><p>强类型Model能提供设计时的智能提示</p></li>
+  <li><p>强类型Model能方便数据绑定及数据验证</p></li>
+  </ul>
+  
+  <p>定义: </p>
+  
+  <ul><li><p>使用@model关键字</p></li>
+  <li><p>必须在视图第一行定义</p></li>
+  <li><p>要在@model后面跟着数据类型名称</p></li>
+  <li><p>Model属性的类型就是@model标识的类型</p></li>
+  </ul>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs css"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>@<span class="hljs-keyword">model</span> myConsole8.Models.TestModel;
+</div></code></pre>
+
+<p>实例: <br>
+Models.TestModel.cs</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Collections.Generic;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">using</span> System.Threading.Tasks;
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Models</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">TestModel</span><span class="hljs-comment">//必须是public</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Telphone { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>}
+</div></code></pre>
+
+<p>Controllers.Test.cs</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Http;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Mvc;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">using</span> myConsole8.Models;
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-keyword">using</span> System.Collections.Generic;
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-keyword">using</span> System.Threading.Tasks;
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Controllers</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>    [Controller]
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Test</span> : <span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> IActionResult <span class="hljs-title">Index</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            TestModel model = <span class="hljs-keyword">new</span> TestModel {<span class="hljs-comment">//实例化模型对象并传入相应数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>                Name = <span class="hljs-string">"zhangsan"</span>,
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>                Telphone = <span class="hljs-number">1234567890</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            };
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            <span class="hljs-keyword">return</span> View(model);<span class="hljs-comment">//将model以参数形式传递进去</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>}
+</div></code></pre>
+
+<p>Views.Test.Index.cshtml</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs xml"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>@model myConsole8.Models.TestModel;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>@{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    ViewData["Title"] = "Index";
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Index<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>@Html.TextBoxFor(m =&gt; m.Name)<span class="hljs-comment">&lt;!--表单生成的HtmlHelper方式--&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><span class="hljs-tag">&lt;<span class="hljs-name">table</span> <span class="hljs-attr">border</span>=<span class="hljs-string">"1"</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>@Model.Name<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>@Model.Telphone<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    <span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><span class="hljs-tag">&lt;/<span class="hljs-name">table</span>&gt;</span>
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>表单标题名称统一管理实例：（利于后期维护管理） <br>
+  DisplayNameAttribute和Html.LabelFor</p>
+</blockquote>
+
+
+
+<h5 id="在testmodelcs模型文件的相应字段上方添加displayname名称">在TestModel.cs模型文件的相应字段上方添加:[DisplayName(“名称”)]</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole8.Models</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">TestModel</span><span class="hljs-comment">//必须是public</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>        <span class="hljs-comment">//改此一处，所有的名称都更改了</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>        [DisplayName(<span class="hljs-string">"用户名"</span>)]<span class="hljs-comment">//引入名称空间using System.ComponentModel;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        [DisplayName(<span class="hljs-string">"电话"</span>)]
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Telphone { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>}
+</div></code></pre>
+
+
+
+<h5 id="视图文件indexcshtmlhtmllabelformm字段名">视图文件Index.cshtml:@Html.LabelFor(m=&gt;m.字段名)</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs xml"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-tag">&lt;<span class="hljs-name">table</span> <span class="hljs-attr">border</span>=<span class="hljs-string">"1"</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>        <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>@Html.LabelFor(m=&gt;m.Name)<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>        <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>@Html.TextBoxFor(m=&gt;m.Name)<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>@Html.LabelFor(m=&gt;m.Telphone)<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>@Html.TextBoxFor(m=&gt;m.Telphone)<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>    <span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><span class="hljs-tag">&lt;/<span class="hljs-name">table</span>&gt;</span>
+</div></code></pre>
+
+<hr>
+
+
+
+<h5 id="某些内容在多个页面需要共享的实现">某些内容在多个页面需要共享的实现</h5>
+
+<ul><li><p>母版页</p></li>
+<li><p>部分视图</p></li>
+</ul>
+
+
+
+<h6 id="母版页">母版页</h6>
+
+<ul><li><p>实现多个视图内容的共享，减少编码量</p></li>
+<li><p>便于系统维护，共享部分的内容修改，改一处，全部都自动更改了。</p>
+
+<blockquote>
+  <p>使用方法：</p>
+  
+  <ul>
+  <li><p>和普通视图创建方法一样</p></li>
+  <li><p>在@renderbody()输出子页面内容</p></li>
+  <li><p>在子页面中使用Layout属性指定母版页</p></li>
+  <li><p>用@rendersection()现了子页面内容的个性化，这样可以达到共享内容最大化</p></li></ul>
+</blockquote></li>
+<li><p>母版页代码:mby.cshtml(放在Views文件夹内就可以了)</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs xml"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/1999/xhtml"</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>头部内容<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>@RenderBody()<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>尾部内容<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</div></code></pre>
+
+<ul><li><p>子页内容：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs gherkin"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-meta">@{</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    ViewData[<span class="hljs-string">"Title"</span>] = <span class="hljs-string">"Privacy"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    Layout = <span class="hljs-string">"~/Views/shared/mby.cshtml"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-variable">&lt;p&gt;</span>这是子页面内容<span class="hljs-variable">&lt;/p&gt;</span>
+</div></code></pre>
+
+<blockquote>
+  <p>内容隔离：@RenderSection() <br>
+  在母版页相应位置：@RenderSection(“name1”) <br>
+  在子页面相应位置处：@Section name1{ &lt; p&gt;隔离内容部分&lt; /p&gt; }</p>
+</blockquote>
+
+
+
+<h6 id="母版页-1">母版页</h6>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs dts"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-params">&lt;html xmlns="http://www.w3.org/<span class="hljs-number">1999</span>/xhtml"&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-params">&lt;head&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    <span class="hljs-params">&lt;title&gt;</span><span class="hljs-params">&lt;/title&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-params">&lt;/head&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-params">&lt;body&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-params">&lt;p&gt;</span>头部内容<span class="hljs-params">&lt;/p&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>    @RenderSection(<span class="hljs-string">"section1"</span>)
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>    <span class="hljs-params">&lt;div&gt;</span>@RenderBody()<span class="hljs-params">&lt;/div&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>    @RenderSection(<span class="hljs-string">"section2"</span>)
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    <span class="hljs-params">&lt;p&gt;</span>尾部内容<span class="hljs-params">&lt;/p&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><span class="hljs-params">&lt;/body&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><span class="hljs-params">&lt;/html&gt;</span>
+</div></code></pre>
+
+
+
+<h6 id="子页面">子页面</h6>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs gherkin"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-meta">@{</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    ViewData[<span class="hljs-string">"Title"</span>] = <span class="hljs-string">"Privacy"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    Layout = <span class="hljs-string">"~/Views/shared/mby.cshtml"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-meta">@section</span> section1{ 
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    <span class="hljs-variable">&lt;p&gt;</span>这是区域1内容<span class="hljs-variable">&lt;/p&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><span class="hljs-variable">&lt;p&gt;</span>这是子页面内容<span class="hljs-variable">&lt;/p&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><span class="hljs-meta">@section</span> section2{ 
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    <span class="hljs-variable">&lt;p&gt;</span>这是区域2内容<span class="hljs-variable">&lt;/p&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>}
+</div></code></pre>
+
+
+
+<h5 id="母版页数据绑定">母版页数据绑定</h5>
+
+<blockquote>
+  <p>在页面顶部用一个变量获取数据，然后在页面中调用该变量即可</p>
+  
+  <ul><li><p>设置数据：控制器渲染页面前：ViewData[“name”]=12345;（一般是数据库获取）</p></li>
+  <li><p>页面获取：开头处：@{ var a= ViewBag.name; }</p></li>
+  <li><p>调用处：@a  即可</p></li>
+  </ul>
+  
+  <hr>
+</blockquote>
+
+
+
+<h5 id="部分视图">部分视图</h5>
+
+<ul><li><p>可以实现视图内容共享</p></li>
+<li><p>可以在视图上通过<span style="background:yellow">Html.Partial(“部分视图的路径“)</span>引入部分视图</p></li>
+<li><p>可以直接作为视图结果（PartialView(“路径”)）返回(即控制器方法中作为返回值使用)&lt;=局部刷新时会用到它（需要结合Ajax）</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs css"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>&lt;<span class="hljs-selector-tag">li</span>&gt;@<span class="hljs-keyword">Html</span>.<span class="hljs-keyword">Partial</span>("~/<span class="hljs-keyword">Views</span>/<span class="hljs-keyword">Shared</span>/<span class="hljs-keyword">abc</span>.<span class="hljs-keyword">cshtml</span>")&lt;/<span class="hljs-keyword">li</span>&gt;
+</div></code></pre>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs aspectj"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">PartialView</span><span class="hljs-params">(<span class="hljs-string">"~/views/shared/abc.cshtml"</span>)</span></span>;
+</div></code></pre>
+
+<blockquote>
+  <p>母版页和部分视图的区别：</p>
+  
+  <ul><li><p>母版页不能独立使用，部分试图可以（PartialView(“局部视图路径”)）</p></li>
+  <li><p>母版页用于内容共享，部分视图则倾向于页面的局部呈现，如局部刷新</p></li>
+  </ul>
+</blockquote>
+
+<hr>
+
+
+
+<h5 id="多个页面共享数据tempdatacachesession">多个页面共享数据：TempData,Cache,Session</h5>
+
+<table><tbody><tr style="font-weight:bold">  <td align="left">TempData（临时数据）</td>  <td align="right">Cache（缓存）</td>  <td align="center">Session</td></tr><tr>  <td align="left">视图级别</td>  <td align="right">应用程序级别</td>  <td align="center">会话级别</td></tr><tr>  <td align="left">只允许消费一次</td>  <td align="right">服务器端保存</td>  <td align="center">服务器端保存</td></tr><tr>  <td align="left">可多次赋值</td>  <td align="right">可设置有效期</td>  <td align="center"></td></tr><tr>  <td align="left">键值对形式</td>  <td align="right">键值对形式</td>  <td align="center">键值对形式</td></tr></tbody></table>
+
+
+
+<h5 id="tempdata视图间共享数据">TempData视图间共享数据</h5>
+
+<ul><li><p>和ViewData使用方法一样（只限于使用方法）</p></li>
+<li><p>但和上面有很大区别：</p>
+
+<blockquote>
+  <ul>
+  <li><p>TempData只能在一个视图使用一次（消费一次，刷新页面后数据就没了）</p></li>
+  <li><p>ViewData只能在定义的控制器对应的视图中使用，而TempData可以跨视图使用</p></li>
+  <li><p><a href="https://www.cnblogs.com/EasonWu/p/beginner-aspnet-mvc-various-ways-of-passing-data-in-mvcapps.html" target="_blank">详细区别引用</a></p></li></ul>
+</blockquote></li>
+<li><p>刷新后还想要显示值，那就在显示代码下面再进行一次赋值操作了 <br>
+控制器方法：AbcController.cs</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs kotlin"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AbcController</span> : <span class="hljs-type">Controller</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>        <span class="hljs-keyword">public</span> IActionResult Index()
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>            ViewData[<span class="hljs-string">"name1"</span>] = <span class="hljs-string">"zhangxan"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>            TempData[<span class="hljs-string">"name2"</span>] = <span class="hljs-string">"lisi"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        <span class="hljs-keyword">public</span> IActionResult Index2()
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    }
+</div></code></pre>
+
+<p>视图Index.cshtml</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs xml"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>@ViewBag.name1<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/abc/index2"</span>&gt;</span>index2<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+</div></code></pre>
+
+<p>视图Index2.cshtml</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs xml"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>@ViewData["name1"]<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>@TempData["name2"]<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><span class="hljs-comment">&lt;!--第一次显示lisi以后都显示zhaoliu--&gt;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>    @{ 
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>        TempData["name2"] = "zhaoliu";//从第一次刷新开始，他的值都是这个了（每次刷新都是一次新的赋值过程）
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+</div></code></pre>
+
+
+
+<h5 id="session">Session:</h5>
+
+<blockquote>
+  <ul><li><p>通过HttpContext.Session获取到Session对象（先实例化它，再使用它）</p></li>
+  <li><p>Session.Set方法添加数据</p></li>
+  <li><p>索引器方式获取对应key的数据</p></li>
+  </ul>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs aspectj"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">public</span> <span class="hljs-function">IActionResult <span class="hljs-title">Index</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>            <span class="hljs-comment">//var session = HttpContext.Session;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>            ISession session = HttpContext.Session;<span class="hljs-comment">//建立对象</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>            session.SetString(<span class="hljs-string">"name"</span>, <span class="hljs-string">"woshiren"</span>);<span class="hljs-comment">//用对象找到对应方法来添加数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            var name=session.GetString(<span class="hljs-string">"name"</span>);<span class="hljs-comment">//获取数据，并赋值到一个变量中</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-title">Content</span><span class="hljs-params">(name)</span></span>;<span class="hljs-comment">//展示数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>           <span class="hljs-comment">// return View();//也可以到视图中展示</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        }
+</div></code></pre>
+
+<p>如果要在视图中展示数据，就将获取数据赋值给ViewBag.key即可</p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs kotlin"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AbcController</span> : <span class="hljs-type">Controller</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>        <span class="hljs-keyword">public</span> IActionResult Index()
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>            <span class="hljs-comment">//var session = HttpContext.Session;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>            ISession session = HttpContext.Session;<span class="hljs-comment">//建立对象</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            session.SetString(<span class="hljs-string">"name"</span>, <span class="hljs-string">"woshiren"</span>);<span class="hljs-comment">//用对象找到对应方法来添加数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-comment">//var name=session.GetString("name");//获取数据，并赋值到一个变量中</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            ViewBag.name = session.GetString(<span class="hljs-string">"name"</span>);<span class="hljs-comment">//如果要在视图中展示数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            <span class="hljs-comment">// return Content(name);//展示数据</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>        <span class="hljs-keyword">public</span> IActionResult Index2()
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>            <span class="hljs-keyword">return</span> View();
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>    }
+</div></code></pre>
+
+<hr>
+
+<p><a href="#Top">Top</a></p></div></body></html>

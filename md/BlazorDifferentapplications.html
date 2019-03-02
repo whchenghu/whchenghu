@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head><title>Blazor的不同应用</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue",Arial,"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,Song,sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<h3 id="blazor的不同应用">Blazor的不同应用</h3>
+
+
+
+<h5 id="创建aspnet-core-web-应用程序时选择blazoraspnet-core-hosted或者blazorserver-side-in-aspnet-core的区别">创建ASP.NET Core Web 应用程序时，选择Blazor(ASP.NET Core hosted)或者Blazor(Server-Side in ASP.NET Core)的区别</h5>
+
+<h5 id="blazoraspnet-core-hosted">Blazor(ASP.NET Core hosted)</h5>
+
+<blockquote>
+  <p>在此它会自动创建3个项目文件</p>
+  
+  <blockquote>
+    <ol><li rel="1"><p>BlazorCrud.Client - 它具有客户端代码并包含将在浏览器上呈现的页面。<span style="background:yellow">(视图)</span></p></li>
+    <li rel="2"><p>BlazorCrud.Server - 它具有服务器端代码，例如与DB相关的操作和Web API。<span style="background:yellow">（控制器）</span></p></li>
+    <li rel="3"><p>BlazorCrud.Shared - 它包含客户端和服务器都可以访问的共享代码。<span style="background:yellow">（模型）</span> <br>
+    <a href="https://social.technet.microsoft.com/wiki/contents/articles/51540.asp-net-core-crud-using-blazor-and-entity-framework-core.aspx?a=12" target="_blank">实例应用</a></p></li>
+    </ol>
+  </blockquote>
+</blockquote>
+
+<hr>
+
+
+
+<h5 id="blazorserver-side-in-aspnet-core服务器端blazor">Blazor(Server-Side in ASP.NET Core)：服务器端Blazor</h5>
+
+<blockquote>
+  <p>在此它会自动创建2个项目文件</p>
+  
+  <blockquote>
+    <ol><li rel="1"><p>ServerSideBlazor.App：这是我们的ASP.NET核心托管项目。该项目包含我们所有的组件逻辑和服务。我们还将在此项目中创建模型和数据访问层。</p></li>
+    <li rel="2"><p>ServerSideBlazor.Server：这包含我们的服务器端Blazor应用程序。服务器端Blazor应用程序在ASP.NET Core主机应用程序中运行，而不是在浏览器中运行客户端。 <br>
+    <a href="https://social.technet.microsoft.com/wiki/contents/articles/51831.understanding-server-side-blazor.aspx" target="_blank">服务器端Blazor知识点讲解</a> <br>
+    <a href="https://social.technet.microsoft.com/wiki/contents/articles/51872.blazor-single-page-application-using-server-side-blazor.aspx" target="_blank">实例应用</a> <br>
+    <a href="https://social.technet.microsoft.com/wiki/contents/articles/51831.understanding-server-side-blazor.aspx" target="_blank">实例应用2</a></p></li>
+    </ol>
+  </blockquote>
+</blockquote></div></body></html>

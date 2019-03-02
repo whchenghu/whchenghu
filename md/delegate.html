@@ -1,0 +1,180 @@
+<!DOCTYPE html><html><head><title>模板方法:”借用”指定的外部方法来产生结果 （相当于填空题，常位于代码中部，委托有返回值）</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<blockquote>
+  <p>委托：delegate   Action   Function</p>
+</blockquote>
+
+<hr>
+
+<h4 id="模板方法借用指定的外部方法来产生结果-相当于填空题常位于代码中部委托有返回值">模板方法:”借用”指定的外部方法来产生结果 （相当于填空题，常位于代码中部，委托有返回值）</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            ProductFactory productFactory = <span class="hljs-keyword">new</span> ProductFactory();<span class="hljs-comment">//实例化生产工厂类</span>
+</div><div class="hljs-line">            WrapFactory wrapFactory = <span class="hljs-keyword">new</span> WrapFactory();<span class="hljs-comment">//实例化包装工厂类</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Func&lt;Product&gt; func1 = <span class="hljs-keyword">new</span> Func&lt;Product&gt;(productFactory.MakePizza);<span class="hljs-comment">//声明一个委托，生产披萨</span>
+</div><div class="hljs-line">            Func&lt;Product&gt; func2 = <span class="hljs-keyword">new</span> Func&lt;Product&gt;(productFactory.MakeToyCar);<span class="hljs-comment">//声明一个委托，生产玩具</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Box box1 = wrapFactory.WrapProduct(func1);<span class="hljs-comment">//包装披萨</span>
+</div><div class="hljs-line">            Box box2 = wrapFactory.WrapProduct(func2);<span class="hljs-comment">//包装玩具</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(box1.Product.Name);
+</div><div class="hljs-line">            Console.WriteLine(box2.Product.Name);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Product</span><span class="hljs-comment">//产品类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Box</span><span class="hljs-comment">//包装类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> Product Product { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">WrapFactory</span><span class="hljs-comment">//包装工厂类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-comment">//模板方法(具体生产什么是不确定的，需要根据传参决定，但是其他部分都是确定)</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> Box <span class="hljs-title">WrapProduct</span>(<span class="hljs-params">Func&lt;Product&gt; getProduct</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Box box = <span class="hljs-keyword">new</span> Box();<span class="hljs-comment">//准备一个包装</span>
+</div><div class="hljs-line">            <span class="hljs-comment">//Product product = getProduct.Invoke();</span>
+</div><div class="hljs-line">            Product product=getProduct();<span class="hljs-comment">//准备一个产品</span>
+</div><div class="hljs-line">            box.Product = product;<span class="hljs-comment">//把产品装到盒子里</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> box;<span class="hljs-comment">//返回成品</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">ProductFactory</span><span class="hljs-comment">//生产工厂类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> Product <span class="hljs-title">MakePizza</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Product product = <span class="hljs-keyword">new</span> Product() { Name = <span class="hljs-string">"pizza"</span> };
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> product;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> Product <span class="hljs-title">MakeToyCar</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Product product = <span class="hljs-keyword">new</span> Product() { Name = <span class="hljs-string">"ToyCar"</span> };
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> product;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+
+
+<h4 id="func的传递值功能">Func的传递值功能</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            BookFactory bookFactory = <span class="hljs-keyword">new</span> BookFactory();
+</div><div class="hljs-line">            Func&lt;<span class="hljs-keyword">string</span>&gt; funcValue = <span class="hljs-keyword">delegate</span> { <span class="hljs-keyword">return</span> <span class="hljs-string">"待传递的值"</span>; };
+</div><div class="hljs-line">            bookFactory.DisPlay(funcValue);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">BookFactory</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">DisPlay</span>(<span class="hljs-params">Func&lt;<span class="hljs-keyword">string</span>&gt; func</span>)<span class="hljs-comment">//处理传进来的值，比如缓存处理，统一添加数据库等</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">string</span> RetFunc = func();
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"传过来的值：{0}"</span>, RetFunc);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+
+
+<h4 id="回调方法调用指定的外部方法相当于流水线常位于代码末尾委托无返回值">回调方法：调用指定的外部方法（相当于流水线，常位于代码末尾，委托无返回值）</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs fortran"><div class="hljs-line">using System;
+</div><div class="hljs-line">namespace myConsole3
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-function"><span class="hljs-keyword">Program</span></span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        static void Main(string[] args)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            ProductFactory productFactory = new ProductFactory();//实例化生产工厂类
+</div><div class="hljs-line">            WrapFactory wrapFactory = new WrapFactory();//实例化包装工厂类
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Func&lt;<span class="hljs-built_in">Product</span>&gt; func1 = new Func&lt;<span class="hljs-built_in">Product</span>&gt;(productFactory.MakePizza);//声明一个委托，生产披萨
+</div><div class="hljs-line">            Func&lt;<span class="hljs-built_in">Product</span>&gt; func2 = new Func&lt;<span class="hljs-built_in">Product</span>&gt;(productFactory.MakeToyCar);//声明一个委托，生产玩具
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Logger logger = new Logger();//实例化日志类
+</div><div class="hljs-line">            <span class="hljs-keyword">Action</span>&lt;<span class="hljs-built_in">Product</span>&gt; <span class="hljs-built_in">log</span> = new <span class="hljs-keyword">Action</span>&lt;<span class="hljs-built_in">Product</span>&gt;(logger.<span class="hljs-built_in">Log</span>);//声明一个委托，调用日志函数
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Box box1 = wrapFactory.WrapProduct(func1,<span class="hljs-built_in">log</span>);//包装披萨
+</div><div class="hljs-line">            Box box2 = wrapFactory.WrapProduct(func2,<span class="hljs-built_in">log</span>);//包装玩具
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(box1.<span class="hljs-built_in">Product</span>.<span class="hljs-keyword">Name</span>);
+</div><div class="hljs-line">            Console.WriteLine(box2.<span class="hljs-built_in">Product</span>.<span class="hljs-keyword">Name</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> Logger//记录程序的运行状态（日志类）&lt;=是没有返回值的方法，故要使用<span class="hljs-keyword">Action</span>委托来调用它
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> void <span class="hljs-built_in">Log</span>(<span class="hljs-built_in">Product</span> <span class="hljs-built_in">product</span>)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            //Console.WriteLine(<span class="hljs-string">"Product'{0}',Price is {1},Created at {2}"</span>, <span class="hljs-built_in">product</span>.<span class="hljs-keyword">Name</span>, <span class="hljs-built_in">product</span>.Price, DateTime.UtcNow);
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Product'{0}',Price is {1},Created at {2}"</span>, <span class="hljs-built_in">product</span>.<span class="hljs-keyword">Name</span>, <span class="hljs-built_in">product</span>.Price, DateTime.Now);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-built_in">Product</span>//产品类
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> string <span class="hljs-keyword">Name</span> { get; set; }
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> Price { get; set; }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> Box//包装类
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-built_in">Product</span> <span class="hljs-built_in">Product</span> { get; set; }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> WrapFactory//包装工厂类
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        //模板方法(具体生产什么是不确定的，需要根据传参决定，但是其他部分都是确定)
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> Box WrapProduct(Func&lt;<span class="hljs-built_in">Product</span>&gt; getProduct,<span class="hljs-keyword">Action</span>&lt;<span class="hljs-built_in">Product</span>&gt; logCallback)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Box box = new Box();
+</div><div class="hljs-line">            <span class="hljs-built_in">Product</span> <span class="hljs-built_in">product</span> = getProduct();
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (<span class="hljs-built_in">product</span>.Price&gt;<span class="hljs-number">50</span>)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                logCallback(<span class="hljs-built_in">product</span>);
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            box.<span class="hljs-built_in">Product</span> = <span class="hljs-built_in">product</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> box;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> ProductFactory//生产工厂类
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-built_in">Product</span> MakePizza()
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-built_in">Product</span> <span class="hljs-built_in">product</span> = new <span class="hljs-built_in">Product</span>() { <span class="hljs-keyword">Name</span> = <span class="hljs-string">"pizza"</span>, Price = <span class="hljs-number">12</span> };
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> <span class="hljs-built_in">product</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-built_in">Product</span> MakeToyCar()
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-built_in">Product</span> <span class="hljs-built_in">product</span> = new <span class="hljs-built_in">Product</span>() { <span class="hljs-keyword">Name</span> = <span class="hljs-string">"ToyCar"</span>, Price=<span class="hljs-number">100</span> };
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> <span class="hljs-built_in">product</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre></div></body></html>

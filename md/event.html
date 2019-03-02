@@ -1,0 +1,473 @@
+<!DOCTYPE html><html><head><title>简单事件实例：</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue",Arial,"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,Song,sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<blockquote>
+  <p>事件：event <br>
+  <span style="color:red">使对象或类具备通知能力的成员</span> <br>
+  使用：用于对象或类间的动作协调与信息传递（消息推送）</p>
+  
+  <blockquote>
+    <p>原理：事件模型（Event Model）:</p>
+    
+    <p>事件模型组成部分:</p>
+    
+    <ol><li rel="1"><p>事件的拥有者(event source,对象)(事件不会主动发生,是拥有者的某些内部逻辑来触发)</p></li>
+    <li rel="2"><p>事件成员(event,成员)</p></li>
+    <li rel="3"><p>事件响应者(event subscriber,对象) </p></li>
+    <li rel="4"><p>事件处理器(event handler ,成员)—本质上是一个回调方法</p></li>
+    <li rel="5"><p>事件订阅—把事件处理器与事件关联起来,本质上是一种以委托类型为基础的”约定”(事件订阅操作符:+=)</p></li>
+    </ol>
+    
+    <p>“发生-&gt;响应”中的动作：</p>
+    
+    <blockquote>
+      <p>有一个事件-&gt;一个人或一群人关心我的这个事件(“订阅事件”)-&gt;我的这个事件发生了-&gt;关心这个事件的人会被依次通知-&gt;被通知的人根据拿到的事件信息（又称“事件数据”，“事件参数”，“通知”），对事件进行响应（又称“处理事件”）</p>
+    </blockquote>
+  </blockquote>
+  
+  <p>事件的功能=通知+可选的事件参数（即详细事件信息） <br>
+  事件多用于桌面 ,手机等开发的客户端编程,因为这些程序经常是用户通过事件来”驱动”的.</p>
+</blockquote>
+
+<hr>
+
+<blockquote>
+  <p>注意:</p>
+  
+  <ul><li><p>事件处理器的方法成员</p></li>
+  <li><p>挂接事件处理器的时候,可以使用委托实例,也可以直接使用方法名,这是”语法糖”.</p></li>
+  <li><p>事件处理器对事件的订阅不是随意的,匹配与否由声明事件时所使用的委托类型来检测</p></li>
+  <li><p>事件可以同步调用,也可以异步调用</p></li>
+  </ul>
+  
+  </blockquote>
+
+<h5 id="简单事件实例">简单事件实例：</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Timers;<span class="hljs-comment">//引入Timers命名空间:System.Timers 命名空间提供 Timer 组件，它使您可以在指定的间隔是引发事件。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-comment">//timer对象中有属性、方法、事件三部分组成</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Timer timer = <span class="hljs-keyword">new</span> Timer();<span class="hljs-comment">//timer：事件的拥有者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            timer.Interval = <span class="hljs-number">1000</span>;<span class="hljs-comment">//Interval是属性：获取或设置引发 Elapsed 事件的间隔（以毫秒为单位）。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Student student = <span class="hljs-keyword">new</span> Student();
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            timer.Elapsed += student.Action;<span class="hljs-comment">//先写这句，快捷键：按Ctrl+. 会自动student类的Action方法！</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            <span class="hljs-comment">//Elapsed是事件：达到间隔时发生。（时间间隔是Interval属性设置的）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            timer.Start();<span class="hljs-comment">//事件拥有者触发事件</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            Console.ReadLine();<span class="hljs-comment">//这句必须写，否则不能正常显示</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Action</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> sender, ElapsedEventArgs e</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>            Console.WriteLine(<span class="hljs-string">"I'm a student"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span><span class="hljs-comment">//事件拥有者：timer：Timer实例对象</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span><span class="hljs-comment">//事件：Elapsed</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span><span class="hljs-comment">//事件响应者：student：实例对象</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span><span class="hljs-comment">//事件处理器：Student.Action：类中方法</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span><span class="hljs-comment">//事件订阅：+=：给事件订阅相关方法</span>
+</div></code></pre>
+
+
+
+<h6 id="结果">结果：</h6>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs vbnet"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>I<span class="hljs-comment">'m a student               //每隔一秒触发一次</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>I<span class="hljs-comment">'m a student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>I<span class="hljs-comment">'m a student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>I<span class="hljs-comment">'m a student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>I<span class="hljs-comment">'m a student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>I<span class="hljs-comment">'m a student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>I<span class="hljs-comment">'m a student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>........
+</div></code></pre>
+
+<hr>
+
+<h5 id="一个事件有两个事件处理器">一个事件有两个事件处理器：</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Timers;<span class="hljs-comment">//引入Timers命名空间:System.Timers 命名空间提供 Timer 组件，它使您可以在指定的间隔是引发事件。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-comment">//timer对象中有属性、方法、事件三部分组成</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Timer timer = <span class="hljs-keyword">new</span> Timer();<span class="hljs-comment">//timer：事件的拥有者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            timer.Interval = <span class="hljs-number">1000</span>;<span class="hljs-comment">//Interval是属性：获取或设置引发 Elapsed 事件的间隔（以毫秒为单位）。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Student student = <span class="hljs-keyword">new</span> Student();<span class="hljs-comment">//事件响应者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            timer.Elapsed += student.Action;<span class="hljs-comment">//先写这句，快捷键：按Ctrl+. 然后再按Enter键： 会自动student类的Action方法！</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            <span class="hljs-comment">//Elapsed是事件：达到间隔时发生。（时间间隔是Interval属性设置的）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            Teacher teacher = <span class="hljs-keyword">new</span> Teacher();<span class="hljs-comment">//事件响应者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            timer.Elapsed += teacher.Sing;<span class="hljs-comment">//给事件再订阅一个事件处理器</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            timer.Start();<span class="hljs-comment">//事件拥有者触发事件</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>            Console.ReadLine();<span class="hljs-comment">//这句必须写，否则不能正常显示</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Action</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> sender, ElapsedEventArgs e</span>)<span class="hljs-comment">//事件处理器</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>            Console.WriteLine(<span class="hljs-string">"I'm a student"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Teacher</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">35.</span>        <span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">36.</span>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Sing</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> sender, ElapsedEventArgs e</span>)<span class="hljs-comment">//事件处理器</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">37.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">38.</span>            i++;
+</div><div class="hljs-line"><span class="hljs-comment line-number">39.</span>            Console.WriteLine(<span class="hljs-string">"I'm Teacher at {0} lines"</span>, i);
+</div><div class="hljs-line"><span class="hljs-comment line-number">40.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">41.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">42.</span>}
+</div></code></pre>
+
+
+
+<h6 id="结果-1">结果：</h6>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs ada"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>I<span class="hljs-symbol">'m</span> a student                   //每隔一秒钟跳出两句，即每隔一秒钟触发一次！
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>I<span class="hljs-symbol">'m</span> Teacher <span class="hljs-keyword">at</span> <span class="hljs-number">1</span> lines
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>I<span class="hljs-symbol">'m</span> a student
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>I<span class="hljs-symbol">'m</span> Teacher <span class="hljs-keyword">at</span> <span class="hljs-number">2</span> lines
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>I<span class="hljs-symbol">'m</span> a student
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>I<span class="hljs-symbol">'m</span> Teacher <span class="hljs-keyword">at</span> <span class="hljs-number">3</span> lines
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>I<span class="hljs-symbol">'m</span> a student
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>I<span class="hljs-symbol">'m</span> Teacher <span class="hljs-keyword">at</span> <span class="hljs-number">4</span> lines
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>I<span class="hljs-symbol">'m</span> a student
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>I<span class="hljs-symbol">'m</span> Teacher <span class="hljs-keyword">at</span> <span class="hljs-number">5</span> lines
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>I<span class="hljs-symbol">'m</span> a student
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>I<span class="hljs-symbol">'m</span> Teacher <span class="hljs-keyword">at</span> <span class="hljs-number">6</span> lines
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>I<span class="hljs-symbol">'m</span> a student
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>I<span class="hljs-symbol">'m</span> Teacher <span class="hljs-keyword">at</span> <span class="hljs-number">7</span> lines
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>.......
+</div></code></pre>
+
+<hr>
+
+
+
+<h5 id="事件的响应者事件处理器订阅事件的拥有者事件">事件的响应者（事件处理器）—订阅—&gt;事件的拥有者（事件）</h5>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Windows.Forms;<span class="hljs-comment">//引入窗体命名空间（前提需要添加引用）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Form form = <span class="hljs-keyword">new</span> Form();<span class="hljs-comment">//事件拥有者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            Controller controller = <span class="hljs-keyword">new</span> Controller(form);<span class="hljs-comment">//new一个对象作为事件响应者(并订阅事件)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-comment">//上一句:因为构造器需要在new对象时传参，所有new事件响应者和订阅事件合在一起了</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            form.ShowDialog();<span class="hljs-comment">//显示窗口（否则无法显示窗体，怎么点击来触发事件）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        <span class="hljs-keyword">public</span> Form form;
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Controller</span>(<span class="hljs-params">Form form</span>)<span class="hljs-comment">//快捷键：输入ctor,两次Tab键即可出现该构造器</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>            <span class="hljs-keyword">if</span> (form != <span class="hljs-literal">null</span>)<span class="hljs-comment">//判断的原因：如果一个对象是空的话，就无法访问它的事件的</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>                <span class="hljs-keyword">this</span>.form = form;
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>                <span class="hljs-keyword">this</span>.form.Click += <span class="hljs-keyword">this</span>.FormClicked;<span class="hljs-comment">//事件订阅;快捷键：Ctrl+.然后Enter</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>        <span class="hljs-comment">//internal void Action(object sender, ElapsedEventArgs e)：这是Elapsed事件的处理器参数样式</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">FormClicked</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> sender, EventArgs e</span>)<span class="hljs-comment">//事件处理器；这里第二个参数类型不同于事件Elapsed的事件处理器的第二个参数</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span><span class="hljs-function">            <span class="hljs-comment">//也就是说：不能拿影响Elapsed事件的事件处理器去响应Click事件；因为它们遵循的约束不同！</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>            <span class="hljs-keyword">this</span>.form.WindowState = FormWindowState.Normal;
+</div><div class="hljs-line"><span class="hljs-comment line-number">35.</span>            <span class="hljs-keyword">this</span>.form.Text = DateTime.Now.ToString();<span class="hljs-comment">//当点击窗体时，标题栏显示最新时间</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">36.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">37.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">38.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">39.</span><span class="hljs-comment">//事件拥有者：form</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">40.</span><span class="hljs-comment">//事件：form.Click</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">41.</span><span class="hljs-comment">//事件响应者：controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">42.</span><span class="hljs-comment">//事件处理器：Controller.FormClicked</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">43.</span><span class="hljs-comment">//事件订阅：+=</span>
+</div></code></pre>
+
+
+
+<h6 id="将上面实例中事件响应者和订阅分开做也可以不采用构造器用普通方法来订阅事件">将上面实例中事件响应者和订阅分开做也可以：不采用构造器，用普通方法来订阅事件</h6>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>            Form form = <span class="hljs-keyword">new</span> Form();<span class="hljs-comment">//事件拥有者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>            Controller controller = <span class="hljs-keyword">new</span> Controller();<span class="hljs-comment">//new一个对象作为事件响应者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>            controller.Subscription(form);<span class="hljs-comment">//事件响应者订阅事件</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            form.ShowDialog();<span class="hljs-comment">//显示窗口（否则无法显示窗体，怎么点击来触发事件）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Controller</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>        <span class="hljs-keyword">public</span> Form form;
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Subscription</span>(<span class="hljs-params">Form form</span>)<span class="hljs-comment">//用于订阅事件的方法</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>            <span class="hljs-keyword">if</span> (form != <span class="hljs-literal">null</span>)<span class="hljs-comment">//判断的原因：如果一个对象是空的话，就无法访问它的事件的</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>                <span class="hljs-keyword">this</span>.form = form;
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>                <span class="hljs-keyword">this</span>.form.Click += <span class="hljs-keyword">this</span>.FormClicked;<span class="hljs-comment">//事件订阅;快捷键：Ctrl+.然后Enter</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        }
+</div></code></pre>
+
+<hr>
+
+<h5 id="事件处理者订阅事件">事件处理者—订阅—&gt;事件</h5>
+
+
+
+<h6 id="事件的拥有者同时也是事件的响应者一个对象既是事件拥有者也是事件响应者">事件的拥有者同时也是事件的响应者：一个对象既是事件拥有者，也是事件响应者：</h6>
+
+<p><span style="background:yellow;margin-left:60px">即：一个对象用自己的处理器，订阅和处理自己的事件 <br>
+</span></p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Windows.Forms;<span class="hljs-comment">//引入窗体命名空间（前提需要添加引用）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            MyForm myForm = <span class="hljs-keyword">new</span> MyForm();
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            myForm.Click += myForm.FormClick;
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            myForm.ShowDialog();
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">MyForm</span> : <span class="hljs-title">Form</span><span class="hljs-comment">//系统自定义的Form类无法重写，所以只能继承它</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">void</span> <span class="hljs-title">FormClick</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> sender, EventArgs e</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            <span class="hljs-keyword">this</span>.Text = DateTime.Now.ToString();
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>}
+</div></code></pre>
+
+<hr>
+
+<h5 id="事件响应者事件处理者订阅事件拥有者事件应用最广泛">事件响应者（事件处理者）—订阅—&gt;事件拥有者（事件）：应用最广泛</h5>
+
+<ul><li><p>事件拥有者时事件响应者的一个字段成员</p></li>
+<li><p>事件的响应者用自己方法订阅自己字段成员的某个事件</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Windows.Forms;<span class="hljs-comment">//引入窗体命名空间（前提需要添加引用）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            MyForm myForm = <span class="hljs-keyword">new</span> MyForm();<span class="hljs-comment">//事件响应者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            myForm.ShowDialog();
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">MyForm</span> : <span class="hljs-title">Form</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> TextBox textBox;
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Button button;<span class="hljs-comment">//事件拥有者：MyForm类的字段成员</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyForm</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//构造器：订阅事件</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            <span class="hljs-keyword">this</span>.textBox = <span class="hljs-keyword">new</span> TextBox();
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>            <span class="hljs-keyword">this</span>.button = <span class="hljs-keyword">new</span> Button();
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>            <span class="hljs-keyword">this</span>.Controls.Add(<span class="hljs-keyword">this</span>.textBox);<span class="hljs-comment">//Controls：获取包含在控件内的控件的集合。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>            <span class="hljs-keyword">this</span>.Controls.Add(<span class="hljs-keyword">this</span>.button);
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>            <span class="hljs-keyword">this</span>.button.Top = <span class="hljs-number">30</span>;<span class="hljs-comment">//调整控件位置、大小等，否则控件都会叠加在左上角</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>            <span class="hljs-keyword">this</span>.button.Text = <span class="hljs-string">"触发"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>            <span class="hljs-keyword">this</span>.textBox.Width = <span class="hljs-number">200</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>            <span class="hljs-keyword">this</span>.button.Click += <span class="hljs-keyword">this</span>.ButtonClicked;<span class="hljs-comment">//Click事件；并订阅事件处理器</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ButtonClicked</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> sender, EventArgs e</span>)<span class="hljs-comment">//事件处理器</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">35.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">36.</span>            <span class="hljs-keyword">this</span>.textBox.Text = DateTime.Now.ToString();
+</div><div class="hljs-line"><span class="hljs-comment line-number">37.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">38.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">39.</span>}
+</div></code></pre>
+
+<hr>
+
+
+
+<h6 id="一个事件处理器可以被多个事件拥有者重用的前提是这个事件处理器必须和被处理的事件保持约束上的一致">一个事件处理器可以被（多个事件拥有者）重用的：前提是：这个事件处理器必须和被处理的事件保持约束上的一致</h6>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs kotlin"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>using System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>using System.Windows.Forms;<span class="hljs-comment">//引入窗体命名空间（前提需要添加引用）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>namespace myConsole3
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        static void Main(string[] args)
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            MyForm myForm = new MyForm();<span class="hljs-comment">//myForm对象：事件响应者</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            myForm.ShowDialog();
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyForm</span> : <span class="hljs-type">Form</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        <span class="hljs-keyword">private</span> readonly TextBox textBox;
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        <span class="hljs-keyword">private</span> readonly Button button;<span class="hljs-comment">//事件拥有者：MyForm类的字段成员</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        <span class="hljs-keyword">private</span> readonly Button button2;<span class="hljs-comment">//他的点击事件也可以重复订阅事件处理器</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-keyword">private</span> readonly Button button3;<span class="hljs-comment">//同上</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        <span class="hljs-keyword">public</span> MyForm()<span class="hljs-comment">//构造器：订阅事件</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>            <span class="hljs-keyword">this</span>.textBox = new TextBox();
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>            <span class="hljs-keyword">this</span>.button = new Button();
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>            <span class="hljs-keyword">this</span>.button2 = new Button();
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>            <span class="hljs-keyword">this</span>.button3 = new Button();
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>            <span class="hljs-keyword">this</span>.Controls.Add(<span class="hljs-keyword">this</span>.textBox);<span class="hljs-comment">//Controls：获取包含在控件内的控件的集合。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>            <span class="hljs-keyword">this</span>.Controls.Add(<span class="hljs-keyword">this</span>.button);
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span>            <span class="hljs-keyword">this</span>.button.Top = <span class="hljs-number">22</span>;<span class="hljs-comment">//调整控件位置、大小等，否则控件都会叠加在左上角</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>            <span class="hljs-keyword">this</span>.button.Text = <span class="hljs-string">"触发"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">35.</span>            <span class="hljs-keyword">this</span>.textBox.Width = <span class="hljs-number">200</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">36.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">37.</span>            <span class="hljs-keyword">this</span>.Controls.Add(<span class="hljs-keyword">this</span>.button2);<span class="hljs-comment">//在窗体上显示该按钮</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">38.</span>            <span class="hljs-keyword">this</span>.Controls.Add(<span class="hljs-keyword">this</span>.button3);
+</div><div class="hljs-line"><span class="hljs-comment line-number">39.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">40.</span>            <span class="hljs-keyword">this</span>.button2.Top = <span class="hljs-number">44</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">41.</span>            <span class="hljs-keyword">this</span>.button2.Text = <span class="hljs-string">"button2"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">42.</span>            <span class="hljs-keyword">this</span>.button3.Top = <span class="hljs-number">66</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">43.</span>            <span class="hljs-keyword">this</span>.button3.Text = <span class="hljs-string">"button3"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">44.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">45.</span>            <span class="hljs-keyword">this</span>.button.Click += <span class="hljs-keyword">this</span>.ButtonClicked;<span class="hljs-comment">//Click事件；并订阅事件处理器</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">46.</span>            <span class="hljs-comment">//第一种挂接事件处理器的方式：</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">47.</span>            <span class="hljs-keyword">this</span>.button2.Click += <span class="hljs-keyword">this</span>.ButtonClicked;<span class="hljs-comment">//给button2的cilck事件添加同样的事件处理器</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">48.</span>            <span class="hljs-comment">//第二种挂接方式：</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">49.</span>            <span class="hljs-comment">//this.button3.Click += new EventHandler(this.ButtonClicked);//这里充分说明了：事件是基于委托的！传统写法；EventHandler:表示将用于处理不具有事件数据的事件的方法。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">50.</span>            <span class="hljs-comment">//第三种挂接方式：不常用写法（已过时）：匿名委托方法，因为无名，所以只能给这一Click事件使用的：它的事件处理器就是这个匿名方法</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">51.</span>            <span class="hljs-comment">//this.button3.Click += delegate (object sender, EventArgs e) { this.textBox.Text = "this is third force methods"; };</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">52.</span>            <span class="hljs-comment">//第四种写法：流行写法(Lambda表达式“=&gt;”)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">53.</span>            <span class="hljs-keyword">this</span>.button3.Click += (<span class="hljs-keyword">object</span> sender, EventArgs e) =&gt; { <span class="hljs-keyword">this</span>.textBox.Text = <span class="hljs-string">"this is Lambda methods"</span>; };
+</div><div class="hljs-line"><span class="hljs-comment line-number">54.</span>            <span class="hljs-comment">//this.button3.Click += (sender, e) =&gt; { this.textBox.Text = "this is Lambda methods"; };//数据类型都可以省略</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">55.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">56.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">57.</span>        <span class="hljs-keyword">private</span> void ButtonClicked(<span class="hljs-keyword">object</span> sender, EventArgs e)<span class="hljs-comment">//事件处理器//sender:事件源；e:不包含事件数据的对象</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">58.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">59.</span>            <span class="hljs-keyword">this</span>.textBox.Text = DateTime.Now.ToString();
+</div><div class="hljs-line"><span class="hljs-comment line-number">60.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">61.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">62.</span>}
+</div></code></pre>
+
+<h6 id="事件处理器可以根据事件拥有者的不同做出不同的响应结果">事件处理器可以根据事件拥有者的不同，做出不同的响应结果</h6>
+
+<p><span style="color:green">事件的拥有者=事件的source=事件消息的发送者=事件处理器的第一个参数object sender</span></p>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs kotlin"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">private</span> void ButtonClicked(<span class="hljs-keyword">object</span> sender, EventArgs e)<span class="hljs-comment">//事件处理器//sender:事件源；e:不包含事件数据的对象</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>            <span class="hljs-keyword">if</span> (sender == <span class="hljs-keyword">this</span>.button)
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>                <span class="hljs-keyword">this</span>.textBox.Text = <span class="hljs-string">"button"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>            <span class="hljs-keyword">if</span> (sender == <span class="hljs-keyword">this</span>.button2)
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>                <span class="hljs-keyword">this</span>.textBox.Text = <span class="hljs-string">"button2"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-keyword">if</span> (sender == <span class="hljs-keyword">this</span>.button3)
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>                <span class="hljs-keyword">this</span>.textBox.Text = <span class="hljs-string">"button3"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>}
+</div></code></pre>
+
+
+
+<h6 id="总结一个事件可以挂接多个事件处理器一个事件处理器也可以被多个事件所挂接">总结：一个事件可以挂接多个事件处理器，一个事件处理器也可以被多个事件所挂接</h6>
+
+<hr>
+
+
+
+<h3 id="声明自定义事件">声明自定义事件</h3>
+
+<h6 id="事件的完整声明方式涉及到委托类型事件">事件的完整声明方式：涉及到委托类型、事件</h6>
+
+<ul><li><p>事件是基于委托的：两层含义：</p>
+
+<blockquote>
+  <ol>
+  <li rel="1"><p>事件需要使用委托类型来做约束（这个约束即规定了事件能够发送什么样的消息给事件响应者，也规定了事件的响应者能收到什么样的事件消息。这就决定了事件响应者的事件处理器必须和这个约束匹配上，才能够订阅这个事件）</p></li>
+  <li rel="2"><p>当事件响应者向事件的拥有者提供了能够匹配这个事件的事件处理器之后，需要找个地方来保存事件处理器，能够记录（或者说引用方法的任务），只有委托类型的实例才能做到</p></li></ol>
+  
+  <blockquote>
+    <p>总结： <br>
+    事件无论从表层约束还是底层实践都是依赖于委托类型的 <br>
+    委托是事件的底层基础，事件是委托的上层建筑。</p>
+  </blockquote>
+  
+  <p><span style="color:#EB4354">声明委托类型和声明委托类型的字段都可以简化说成声明一个委托，要注意区分！(要根据上下文区分)</span> <br>
+  当没有合适的委托类型供我们声明具体某一个事件时，首先需要声明一个委托类型！</p>
+</blockquote></li>
+</ul>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><wbr>
+</div></code></pre></div></body></html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html><html><head><title>委托回顾+Linq初探</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue",Arial,"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,Song,sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<p><span id="top"></span></p>
+
+
+
+<h2 id="委托回顾linq初探">委托回顾+Linq初探</h2>
+
+<blockquote>
+  <p>委托是一种类型 <br>
+  委托是一种类类型（委托是类） <br>
+  委托类型是一种特殊的类 <br>
+  委托类型的实例的功能：方法的封装器 <br>
+  用委托类型的实例来间接调用一些方法</p>
+</blockquote>
+
+<hr>
+
+
+
+<h5 id="基本实例1委托类型返回值void">基本实例1：委托类型返回值void</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">delegate</span> <span class="hljs-keyword">void</span> <span class="hljs-title">MyDele</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//和类一个级别，不能声明到类体内</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            MyDele myDele = <span class="hljs-keyword">new</span> MyDele(Mthod);
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            myDele += Mthod;<span class="hljs-comment">//一个委托实例可以包裹多个函数：多播委托</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            <span class="hljs-comment">//myDele.Invoke();</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            <span class="hljs-comment">//myDele();</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>            Student student = <span class="hljs-keyword">new</span> Student();
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            myDele += student.Say;
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>            myDele();
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Mthod</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>            Console.WriteLine(<span class="hljs-string">"abcd"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Student</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Say</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>            Console.WriteLine(<span class="hljs-string">"I'm a student"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>}
+</div></code></pre>
+
+<h5 id="基本实例2委托类型返回值double">基本实例2：委托类型返回值double</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-comment">//声明一个委托类型</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">delegate</span> <span class="hljs-keyword">double</span> <span class="hljs-title">MyDele</span>(<span class="hljs-params"><span class="hljs-keyword">double</span> x, <span class="hljs-keyword">double</span> y</span>)</span>;<span class="hljs-comment">//返回值类型是double，那么它包裹的函数返回值类型也必须是double</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>    {   
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            MyDele data = <span class="hljs-keyword">new</span> MyDele(Num);<span class="hljs-comment">//实例化委托,并包裹一个方法</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            <span class="hljs-keyword">double</span> a = data(<span class="hljs-number">23</span>, <span class="hljs-number">90</span>);<span class="hljs-comment">//间接调用方法时需要给定参数，并赋值给一个double类型变量</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>            Console.WriteLine(a);
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">double</span> <span class="hljs-title">Num</span>(<span class="hljs-params"><span class="hljs-keyword">double</span> a, <span class="hljs-keyword">double</span> b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            <span class="hljs-keyword">return</span> a + b;
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>}
+</div></code></pre>
+
+<hr>
+
+<h5 id="泛型委托">泛型委托</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-comment">//声明一个泛型委托类型</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">delegate</span> T MyDele&lt;T&gt;(T a, T b);
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>    {   
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            MyDele&lt;<span class="hljs-keyword">int</span>&gt; myDele = <span class="hljs-keyword">new</span> MyDele&lt;<span class="hljs-keyword">int</span>&gt;(Num);<span class="hljs-comment">//实例化一个int类型的委托实例并包裹一个同样返回值类型为int的Num方法</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Console.WriteLine(myDele(<span class="hljs-number">100</span>, <span class="hljs-number">12</span>));
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            MyDele&lt;<span class="hljs-keyword">double</span>&gt; myDele2 = <span class="hljs-keyword">new</span> MyDele&lt;<span class="hljs-keyword">double</span>&gt;(Cheng);
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>            Console.WriteLine(myDele2(<span class="hljs-number">12</span>, <span class="hljs-number">12</span>));
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            Console.WriteLine(myDele.GetType().IsClass);<span class="hljs-comment">//True:说明委托是一种类类型</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Num</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> a, <span class="hljs-keyword">int</span> b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>            <span class="hljs-keyword">return</span> a + b;
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">double</span> <span class="hljs-title">Cheng</span>(<span class="hljs-params"><span class="hljs-keyword">double</span> a, <span class="hljs-keyword">double</span> b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>            <span class="hljs-keyword">return</span> a * b;
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span>}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>.NET Framework类库里已经加入了预先声明好的泛型委托（两大类：Func有返回值，Action无返回值的void） <br>
+  Action包裹的方法不能有参数； <br>
+  若无返回值的函数带有参数，可以用Action&lt; T &gt;；即泛型委托</p>
+</blockquote>
+
+<h5 id="action和action-t-实例">Action和Action&lt; T &gt;实例：</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {  
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Action action1 = <span class="hljs-keyword">new</span> Action(Say);<span class="hljs-comment">//Action只用于无返回值类型的函数包裹</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            action1();
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            Action&lt;<span class="hljs-keyword">string</span>,<span class="hljs-keyword">int</span>&gt; action2 = <span class="hljs-keyword">new</span> Action&lt;<span class="hljs-keyword">string</span>,<span class="hljs-keyword">int</span>&gt;(Say2);<span class="hljs-comment">//对于有参数的方法；可用Action&lt;T&gt;：泛型委托</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            action2(<span class="hljs-string">"anme1"</span>,<span class="hljs-number">10</span>);<span class="hljs-comment">//连续输出十遍。。。</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Say</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            Console.WriteLine(<span class="hljs-string">"Action Say"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Say2</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name,<span class="hljs-keyword">int</span> x</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; x; i++)
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>                Console.WriteLine(<span class="hljs-string">$"Say2:<span class="hljs-subst">{name}</span>"</span>);<span class="hljs-comment">//前面加$符号，双引号内用大括号可以写变量</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>}
+</div></code></pre>
+
+
+
+<h5 id="结果">结果：</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs avrasm"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>Action Say
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><span class="hljs-symbol">Say2:</span>anme1
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>请按任意键继续. . .
+</div></code></pre>
+
+
+
+<h5 id="func-t-实例func-最少有一个类型-即返回值类型有参数时最后一个类型为返回值类型">Func&lt; T &gt;实例：Func&lt; 最少有一个类型 &gt;：即返回值类型，有参数时，最后一个类型为返回值类型</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {  
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Func&lt;<span class="hljs-keyword">string</span>&gt; func1 = <span class="hljs-keyword">new</span> Func&lt;<span class="hljs-keyword">string</span>&gt;(Show);<span class="hljs-comment">//函数没有参数，这里的string是返回值类型</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Console.WriteLine(func1()); <span class="hljs-comment">//原函数只返回结果，并没有输出，故这里还需要Console.WriteLie()</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            Func&lt;<span class="hljs-keyword">double</span>, <span class="hljs-keyword">double</span>, <span class="hljs-keyword">double</span>&gt; func2 = <span class="hljs-keyword">new</span> Func&lt;<span class="hljs-keyword">double</span>, <span class="hljs-keyword">double</span>, <span class="hljs-keyword">double</span>&gt;(Num);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Console.WriteLine(func2(<span class="hljs-number">2.3</span>, <span class="hljs-number">3.4</span>)); 
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">double</span> <span class="hljs-title">Num</span>(<span class="hljs-params"><span class="hljs-keyword">double</span> a,<span class="hljs-keyword">double</span> b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            <span class="hljs-keyword">var</span> c = a * b;
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>            Console.WriteLine(c.GetType().Name);<span class="hljs-comment">//此处说明返回值是double类型的</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            <span class="hljs-keyword">return</span> c;
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> <span class="hljs-title">Show</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>            <span class="hljs-keyword">return</span> <span class="hljs-string">"Hello!"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>}
+</div></code></pre>
+
+<hr>
+
+
+
+<h4 id="lambda表达式">Lambda表达式：</h4>
+
+<blockquote>
+  <p>起到两个作用：</p>
+  
+  <ol><li rel="1"><p>匿名函数</p></li>
+  <li rel="2"><p>Inline方法</p></li>
+  </ol>
+  
+  </blockquote>
+
+
+<h6 id="非匿名的不是inline方法">非匿名的不是Inline方法：</h6>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {  
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            <span class="hljs-keyword">int</span> a = Num(<span class="hljs-number">1</span>, <span class="hljs-number">34</span>);<span class="hljs-comment">//该方法调用前已经声明好的，并不是调用时才去声明的；即非Inline方法</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Console.WriteLine(a);
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Num</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> a,<span class="hljs-keyword">int</span> b</span>)<span class="hljs-comment">//该方法不是匿名方法</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            <span class="hljs-keyword">return</span> a + b;
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>}
+</div></code></pre>
+
+
+
+<h5 id="lambad符号">Lambad：符号：=&gt;</h5>
+
+<blockquote>
+  <p>什么时候调用什么时候声明，且声明的方法是匿名方法 <br>
+  用完就扔，不会污染程序</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {  
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-comment">//Func&lt;int, int, int&gt; func = new Func&lt;int, int, int&gt;((int a, int b) =&gt; { return a + b; });</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-comment">//var func = new Func&lt;int, int, int&gt;((int a, int b) =&gt; { return a + b; });</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            <span class="hljs-keyword">var</span> func = <span class="hljs-keyword">new</span> Func&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;((a, b) =&gt; { <span class="hljs-keyword">return</span> a + b; });<span class="hljs-comment">//简洁写法</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Func&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt; func3 = (a, b) =&gt; { <span class="hljs-keyword">return</span> a + b; };<span class="hljs-comment">//最简洁：将Lambad表达式直接赋值给一个委托类型变量（省略了创建委托实例的步骤）</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">func4</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> a,<span class="hljs-keyword">int</span> b</span>) </span>{ <span class="hljs-keyword">return</span> a + b; }<span class="hljs-comment">//这个更简洁了:不过这个是函数内的函数了</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            <span class="hljs-keyword">var</span> Func2 = <span class="hljs-keyword">new</span> Func&lt;<span class="hljs-keyword">double</span>, <span class="hljs-keyword">double</span>, <span class="hljs-keyword">double</span>&gt;((<span class="hljs-keyword">double</span> a, <span class="hljs-keyword">double</span> b) =&gt; { <span class="hljs-keyword">return</span> a * b; });
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>            <span class="hljs-keyword">int</span> res = func(<span class="hljs-number">100</span>, <span class="hljs-number">23</span>);<span class="hljs-comment">//调用</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            Console.WriteLine(res);<span class="hljs-comment">//输出</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>            Console.WriteLine(func3(<span class="hljs-number">2</span>,<span class="hljs-number">4</span>));
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>            Console.WriteLine(func4(<span class="hljs-number">2</span>,<span class="hljs-number">4</span>));
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>            Console.WriteLine(Func2(<span class="hljs-number">3.2</span>,<span class="hljs-number">1.09</span>));
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>}
+</div></code></pre>
+
+
+
+<h5 id="泛型方法泛型的委托类型参数泛型参数lambda表达式">泛型方法+泛型的委托类型参数+泛型参数+Lambda表达式：</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {  
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            <span class="hljs-comment">//Num&lt;int&gt;((int a, int b) =&gt; { return a + b; }, 100, 300);</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Num((a, b) =&gt; { <span class="hljs-keyword">return</span> a + b; }, <span class="hljs-number">100</span>, <span class="hljs-number">200</span>);<span class="hljs-comment">//简洁写法：可以根据传进来的参数来推断类型，所以可以省略前面的类型指定：泛型委托的类型参数推断</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Num&lt;T&gt;(Func&lt;T,T,T&gt; func,T x,T y)<span class="hljs-comment">//函数Num本身就是泛型的,参数也是一个泛型委托：函数中的T是Func中第三个T，即返回值类型</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            T res = func(x , y);
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            Console.WriteLine(res);
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>}
+</div></code></pre>
+
+<blockquote>
+  <p>泛型方法：Num&lt; T &gt; <br>
+  泛型的委托类型参数：Func&lt;T,T,T&gt; <br>
+  泛型参数：T x,T y</p>
+</blockquote>
+
+<hr>
+
+
+
+<h4 id="linq-net-language-integrated-query语言集成查询">Linq：.  NET language Integrated Query（语言集成查询）</h4>
+
+<blockquote>
+  <p>用于查询数据库 <br>
+  </p><hr color="red"> <br>
+  Lambda表达式和方法之间的关系：<p></p>
+  
+  <blockquote>
+    <p>Lambda表达式赋值给一个委托类型变量 <br>
+    Lambda表达式“喂”一个委托类型参数</p>
+  </blockquote>
+</blockquote>
+
+<hr>
+
+<blockquote>
+  <p>连接数据库：EF方法： <br>
+  .NET framework下的控制台程序连接SQL server数据库 <br>
+  在项目名称上右击新建文件夹:Models <br>
+  右击Models文件夹-&gt;添加-&gt;新建项：找到data中ADO.NET实体数据模型，选中添加 <br>
+  选择“来自数据库的EF设计器”，下一步 <br>
+  新建连接；数据源选择“Microsoft SQL Server”;左下角”始终选择此选择”不选；下一步 <br>
+  填写服务器名称（在视图-&gt;服务器资源管理器-&gt;右击相关属性即可复制服务器名）==&gt;测试连接后再下一步 <br>
+  页面下方框中dbtestEntities1：这个Entities结尾的就是连接数据库的函数名；下一步 <br>
+  选择哪个映射为对象：可以选择表（之前建好的表）；下一步 <br>
+  然后在Main()函数中New一个dbtestEntities对象即可使用数据库</p>
+</blockquote>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs javascript"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>using System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>using System.Linq;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>using ConsoleApp10.Models;
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>namespace ConsoleApp10
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-class">    </span>{  
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(string[] args)
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-comment">//dbtestEntities dbContrext = new dbtestEntities();</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            <span class="hljs-keyword">var</span> dbContext = <span class="hljs-keyword">new</span> dbtestEntities();
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-keyword">var</span> allFirstNames = dbContext.Table.ToList();
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            foreach (<span class="hljs-keyword">var</span> p <span class="hljs-keyword">in</span> allFirstNames)
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>                Console.WriteLine(p.Username);
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            <span class="hljs-keyword">var</span> allFull = dbContext.Table.Select(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.Username + <span class="hljs-string">"-----"</span> + p.age).ToList();
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>            foreach (<span class="hljs-keyword">var</span> p <span class="hljs-keyword">in</span> allFull)
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>                Console.WriteLine(p);
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>            <span class="hljs-keyword">var</span> allFull2 = dbContext.Table.Where(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.ClassId == <span class="hljs-number">2</span>).Select(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.ClassId + <span class="hljs-string">"......."</span> + p.Username + <span class="hljs-string">"+++++"</span> + p.age + <span class="hljs-string">"+++++"</span> + p.Id).ToList() ;
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>            foreach (<span class="hljs-keyword">var</span> p <span class="hljs-keyword">in</span> allFull2)
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>                Console.WriteLine(p);
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>            bool y = dbContext.Table.All(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.age == <span class="hljs-number">30</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span>            Console.WriteLine(y);<span class="hljs-comment">//false:All()是否全都满足这个条件：并不是所有人年龄都是30，故false</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>            <span class="hljs-keyword">var</span> x = dbContext.Table.Any(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.age == <span class="hljs-number">23</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">35.</span>            Console.WriteLine(x);<span class="hljs-comment">//True:Any():只要有一个就为真、</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">36.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">37.</span>            <span class="hljs-keyword">var</span> res = dbContext.Table.GroupBy(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.age).ToList();
+</div><div class="hljs-line"><span class="hljs-comment line-number">38.</span>            foreach (<span class="hljs-keyword">var</span> a <span class="hljs-keyword">in</span> res)
+</div><div class="hljs-line"><span class="hljs-comment line-number">39.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">40.</span>            Console.WriteLine(<span class="hljs-string">"Age:{0},\t Count:{1}"</span>,a.Key,a.Count());<span class="hljs-comment">//以年龄分组；每个年龄的人数是多少个</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">41.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">42.</span>            <span class="hljs-comment">//select age,Count(*) from Table where age=group by age;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">43.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">44.</span>            int n = dbContext.Table.Count(<span class="hljs-function"><span class="hljs-params">p</span> =&gt;</span> p.age == <span class="hljs-number">23</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">45.</span>            Console.WriteLine(n);<span class="hljs-comment">//输出年龄23的人数</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">46.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">47.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">48.</span>}
+</div></code></pre>
+
+<blockquote>
+  <p>类似于Where Select All Any GroupBy ….之类的函数：搜索“C# Linq.methods”即可(他们都是System.Linq命名空间下的) <br>
+  或者光标放到面任意一个函数上，按F1键即可跳转到相关文档    <span style="color:red">&lt;=[ 快捷键 ]</span></p>
+  
+  <blockquote>
+    <p>借鉴博文：</p>
+    
+    <blockquote>
+      <p><a href="https://www.cnblogs.com/foundation/archive/2009/01/05/1369371.html" target="_blank">Linq大全</a> <br>
+      <a href="https://zzk.cnblogs.com/s?t=b&amp;w=Linq" target="_blank">博客园搜索Linq</a></p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+
+<p><span style="margin-left:=0px"><a href="#top">返回顶部</a> <br>
+</span> <br>
+</p><hr color="red"><p></p>
+
+<hr color="red">
+
+<hr color="red">
+
+<h4 id="补充"><div style="color:Cyan">补充：</div></h4>
+
+<h5 id="自定义泛型委托">自定义泛型委托</h5>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">delegate</span> <span class="hljs-keyword">void</span> MyDele&lt;T&gt;(T a);
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            GetRes((a) =&gt; { Say(a); }, <span class="hljs-string">"NAME"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            GetRes((a) =&gt; { Tag(a); }, <span class="hljs-number">100</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> GetRes&lt;T&gt;(MyDele&lt;T&gt; mydele, T a)
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            mydele(a);
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Say</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>            Console.WriteLine(<span class="hljs-string">"I'm {0}"</span>,name);
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Tag</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> i</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>            Console.WriteLine(<span class="hljs-string">"this is Number {0}"</span>,i);
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>}
+</div></code></pre>
+
+
+
+<h5 id="action使用泛型单参数">Action使用泛型（单参数）</h5>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            GetRes((a) =&gt; { Console.WriteLine(a); }, <span class="hljs-string">"NAME"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            GetRes((a) =&gt; { Console.WriteLine(a); }, <span class="hljs-number">100</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> GetRes&lt;T&gt;(Action&lt;T&gt; action, T a)
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            action(a);
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>}
+</div></code></pre>
+
+
+
+<h5 id="action使用泛型多参数">Action使用泛型（多参数）</h5>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            GetNum((a, b) =&gt; { Console.WriteLine(a+b); }, <span class="hljs-number">200</span>, <span class="hljs-number">300</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> GetNum&lt;T&gt;(Action&lt;T,T&gt; action,T a,T b)
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            action(a,b);
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>}
+</div></code></pre>
+
+
+
+<h5 id="func使用泛型单参数">Func使用泛型（单参数）</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            GetNum((a) =&gt; { <span class="hljs-keyword">return</span> a; }, <span class="hljs-number">200</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> GetNum&lt;T&gt;(Func&lt;T,T&gt; func,T a)
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Console.WriteLine(func(a)); 
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>}
+</div></code></pre>
+
+
+
+<h5 id="func使用泛型多参数">Func使用泛型（多参数）</h5>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            GetNum((a,b) =&gt; { <span class="hljs-keyword">return</span> a*b; }, <span class="hljs-number">200</span>,<span class="hljs-number">3</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> GetNum&lt;T&gt;(Func&lt;T,T,T&gt; func,T a,T b)
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Console.WriteLine(func(a,b)); 
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>}
+</div></code></pre>
+
+
+
+<h5 id="函数返回值是泛型函数名前面一个t">函数返回值是泛型（函数名前面一个T）</h5>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            GetNum((a, b) =&gt; { Console.WriteLine(a*b);<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; }, <span class="hljs-number">200</span>,<span class="hljs-number">3</span>);<span class="hljs-comment">//Lambda表达式必须有返回值，故return 0;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        <span class="hljs-keyword">static</span> T GetNum&lt;T&gt;(Func&lt;T,T,T&gt; func,T a,T b)
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            <span class="hljs-keyword">return</span> func(a, b);
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>}
+</div></code></pre>
+
+<blockquote>
+  <p>static T GetNum&lt; T &gt;(Func&lt;T,T,T&gt; func,T a,T b) ：</p>
+  
+  <blockquote>
+    <p>第一个T：函数返回值的类型是泛型 <br>
+    第二个T：函数本身是泛型 <br>
+    第三个T和第四个T：委托的两个参数的类型是泛型 <br>
+    第五个T：泛型的返回值类型是泛型 <br>
+    第六个T和第七个T：委托的实例对象的两个参数的类型是泛型</p>
+  </blockquote>
+</blockquote></div></body></html>

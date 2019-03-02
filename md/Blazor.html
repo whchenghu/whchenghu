@@ -1,0 +1,37 @@
+<!DOCTYPE html><html><head><title>Blazor学习第二天</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue",Arial,"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,Song,sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<h2 id="blazor学习第二天">Blazor学习第二天</h2>
+
+<blockquote>
+  <p>借鉴：</p>
+  
+  <blockquote>
+    <p><a href="https://www.cnblogs.com/kingreatwill/p/9865945.html" target="_blank">Blazor基础原理分析</a> <br>
+    <a href="https://blazor.net/docs/routing.html" target="_blank">Blazor语法手册（只讲语法，不讲实现原理）</a> <br>
+    <a href="https://code.msdn.microsoft.com/ASPNET-Core-Getting-7039bf70#content" target="_blank">Blazor入门小案例（计算器实例）</a> <br>
+    <a href="https://www.cnblogs.com/Gerryz/p/get-start-with-dotnet-blazor.html" target="_blank">Blzaor语法原理细节</a></p>
+  </blockquote>
+</blockquote>
+
+
+
+<h5 id="最终整个页面都会被编译成一个类objdebugsharedsurveypromptgcs-这个类派生自-component">最终整个页面都会被编译成一个类（obj.Debug.Shared.SurveyPrompt.g.cs）, 这个类派生自 <span style="background:#ffff00">Component</span></h5>
+
+<blockquote>
+  <p>“代码隐藏”的基类继承：</p>
+  
+  <blockquote>
+    <p><span style="background:#ffff00">当使用@inherits Test 时，在Test.cs中类Test必须要继承BlazorComponent类，否则不起作用</span> <br>
+    <span style="color:#ff0000">The base class should derive from BlazorComponent.</span></p>
+  </blockquote>
+</blockquote>
+
+<ul><li><p>MarkupString</p></li>
+</ul></div></body></html>

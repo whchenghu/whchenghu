@@ -1,0 +1,404 @@
+<!DOCTYPE html><html><head><title>泛型</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue",Arial,"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",SimSun,Song,sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<div id="top"></div>
+
+<h3 id="泛型">泛型</h3>
+
+<blockquote>
+  <p>泛型的作用：避免成员膨胀或者类型膨胀 <br>
+  正交性：泛型类型（类/接口/委托…）、泛型成员（属性/方法/字段….） <br>
+  类型方法的参数推断 <br>
+  泛型与委托、Lanbda表达式</p>
+</blockquote>
+
+
+
+<h4 id="简单实例">简单实例</h4>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp11</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            Apple apple = <span class="hljs-keyword">new</span> Apple { Color = <span class="hljs-string">"red"</span> };<span class="hljs-comment">//实例化一个具体的商品</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Box box = <span class="hljs-keyword">new</span> Box { Cargo = apple };<span class="hljs-comment">//包装它</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Console.WriteLine(box.Cargo.Color);
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Apple</span><span class="hljs-comment">//商品1：apple</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Color { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//商品属性</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Box</span><span class="hljs-comment">//商品包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-keyword">public</span> Apple Cargo { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//为商品1准备的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>}
+</div></code></pre>
+
+<ul><li><p>当有多个商品时，又需要写多个商品的包装方法，造成了方法的膨胀(不利于后期维护和扩展)</p></li>
+</ul>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp11</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            Apple apple = <span class="hljs-keyword">new</span> Apple { Color = <span class="hljs-string">"red"</span> };<span class="hljs-comment">//实例化一个具体的商品</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Box box = <span class="hljs-keyword">new</span> Box { Cargo = apple };<span class="hljs-comment">//包装它</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Console.WriteLine(box.Cargo.Color);
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            Book book = <span class="hljs-keyword">new</span> Book { Name = <span class="hljs-string">"xiaoming"</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Box2 box2 = <span class="hljs-keyword">new</span> Box2 { Cargo = book };
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            Console.WriteLine(box2.Cargo.Name);
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Apple</span><span class="hljs-comment">//商品1：apple</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Color { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//商品属性</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Book</span><span class="hljs-comment">//商品2</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Box</span><span class="hljs-comment">//商品1的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>        <span class="hljs-keyword">public</span> Apple Cargo { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//为商品1准备的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Box2</span><span class="hljs-comment">//商品2的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span>        <span class="hljs-keyword">public</span> Book Cargo { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>}
+</div></code></pre>
+
+<ul><li><p>改进1：将包装的方法属性都写到一个方法中，这样虽比上面简洁一些，但属于属性膨胀</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp11</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            Apple apple = <span class="hljs-keyword">new</span> Apple { Color = <span class="hljs-string">"red"</span> };<span class="hljs-comment">//实例化一个具体的商品</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Box box = <span class="hljs-keyword">new</span> Box { Cargo = apple };<span class="hljs-comment">//包装它</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Console.WriteLine(box.Cargo.Color);
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            Book book = <span class="hljs-keyword">new</span> Book { Name = <span class="hljs-string">"xiaoming"</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Box box2 = <span class="hljs-keyword">new</span> Box { Bookbox = book };
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            Console.WriteLine(box2.Bookbox.Name);
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Apple</span><span class="hljs-comment">//商品1：apple</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Color { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//商品属性</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Book</span><span class="hljs-comment">//商品2</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Box</span><span class="hljs-comment">//商品的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>        <span class="hljs-keyword">public</span> Apple Cargo { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//为商品1准备的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>        <span class="hljs-keyword">public</span> Book Bookbox { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//为商品2准备的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>}
+</div></code></pre>
+
+
+
+<h5 id="使用泛型类作为包装类">使用泛型类作为包装类</h5>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs haxe"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>namespace ConsoleApp11
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-class">    </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-keyword">static</span> void Main(string[] args)
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            Apple apple = <span class="hljs-keyword">new</span> <span class="hljs-type">Apple</span> { Color = <span class="hljs-string">"red"</span> };<span class="hljs-comment">//实例化一个具体的商品</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            Box&lt;Apple&gt; box = <span class="hljs-keyword">new</span> <span class="hljs-type">Box</span>&lt;Apple&gt; { Cargo = apple };<span class="hljs-comment">//包装它</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Console.WriteLine(box.Cargo.Color);
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            Book book = <span class="hljs-keyword">new</span> <span class="hljs-type">Book</span> { Name = <span class="hljs-string">"xiaoming"</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            <span class="hljs-keyword">var</span> box2 = <span class="hljs-keyword">new</span> <span class="hljs-type">Box</span>&lt;Book&gt; { Cargo = book };
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            Console.WriteLine(box2.Cargo.Name);
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Apple</span>//商品1：<span class="hljs-title">apple</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span><span class="hljs-class">    </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-keyword">public</span> string Color { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//商品属性</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Book</span>//商品2</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span><span class="hljs-class">    </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>        <span class="hljs-keyword">public</span> string Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Box</span>&lt;<span class="hljs-title">T</span>&gt;//商品的包装:泛型类</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span><span class="hljs-class">    </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>        <span class="hljs-keyword">public</span> T Cargo { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//为商品准备的包装</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>}
+</div></code></pre>
+
+<hr>
+
+
+
+<h4 id="泛型接口">泛型接口</h4>
+
+<ul><li><p>实现接口时就指定属性的类型</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cpp"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> ConsoleApp11
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> Program
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-built_in">string</span>[] args)</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            Student stu1 = <span class="hljs-keyword">new</span> Student { ID = <span class="hljs-number">1</span>, Name = <span class="hljs-string">"zhangsan"</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    interface IUnique&lt;T&gt;<span class="hljs-comment">//泛型接口</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        T ID { get; <span class="hljs-built_in">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>    <span class="hljs-keyword">class</span> Student : IUnique&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-comment">//实现接口，但是依然不指定ID类型，等实例化时候再指定</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> ID { get; <span class="hljs-built_in">set</span>; }<span class="hljs-comment">//上面已经指定int类型了，这里必须要int来修饰</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Name { get; <span class="hljs-built_in">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>}
+</div></code></pre>
+
+<ul><li><p>实现接口，但不指定属性的类型，实例化时候再指定</p></li>
+</ul>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cpp"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> ConsoleApp11
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> Program
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-built_in">string</span>[] args)</span></span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            Student&lt;<span class="hljs-keyword">int</span>&gt; stu1 = <span class="hljs-keyword">new</span> Student&lt;<span class="hljs-keyword">int</span>&gt; { ID = <span class="hljs-number">1</span>, Name = <span class="hljs-string">"zhangsan"</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            Student&lt;<span class="hljs-keyword">double</span>&gt; stu2 = <span class="hljs-keyword">new</span> Student&lt;<span class="hljs-keyword">double</span>&gt; { ID = <span class="hljs-number">1.1</span>, Name = <span class="hljs-string">"lisi"</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    interface IUnique&lt;T&gt;<span class="hljs-comment">//泛型接口</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>        T ID { get; <span class="hljs-built_in">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    <span class="hljs-keyword">class</span> Student&lt;T&gt; : IUnique&lt;T&gt;<span class="hljs-comment">//实现接口，但是依然不指定ID类型，等实例化时候再指定</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span>        <span class="hljs-keyword">public</span> T ID { get; <span class="hljs-built_in">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Name { get; <span class="hljs-built_in">set</span>; }
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>}
+</div></code></pre>
+
+<blockquote>
+  <p>泛型无处不在的体现：</p>
+  
+  <ul><li><p>泛型具有良好的正交性：它和类/接口/委托…属性/方法/字段….都可以结合使用，形成泛型类，泛型委托…</p></li>
+  <li><p>.NET Framework中几乎所有常用的数据类型都是泛型的</p></li>
+  </ul>
+</blockquote>
+
+
+
+<h5 id="泛型的集合都集中在下面的名称空间里">泛型的集合都集中在下面的名称空间里</h5>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs css"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-selector-tag">using</span> <span class="hljs-selector-tag">System</span><span class="hljs-selector-class">.Collections</span><span class="hljs-selector-class">.Generic</span>;
+</div></code></pre>
+
+<ul><li><p>泛型接口</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Collections.Generic;<span class="hljs-comment">//引入名称空间</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp11</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            IList&lt;<span class="hljs-keyword">int</span>&gt; list = <span class="hljs-keyword">new</span> List&lt;<span class="hljs-keyword">int</span>&gt;();<span class="hljs-comment">//IList泛型接口，List泛型类</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">100</span>; i++)<span class="hljs-comment">//循环赋值</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>                list.Add(i);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> item <span class="hljs-keyword">in</span> list)<span class="hljs-comment">//循环输出</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>                Console.WriteLine(item);<span class="hljs-comment">//输出0到99</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            }
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>}
+</div></code></pre>
+
+<ul><li><p>泛型类型可以带有不止一个参数</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">using</span> System.Collections.Generic;
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp11</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            IDictionary&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">string</span>&gt; dict = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">string</span>&gt;();
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>            dict[<span class="hljs-number">1</span>] = <span class="hljs-string">"zhangsan"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            dict[<span class="hljs-number">2</span>] = <span class="hljs-string">"lisi"</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            Console.WriteLine(dict[<span class="hljs-number">1</span>]);
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>            Console.WriteLine(dict[<span class="hljs-number">2</span>]);
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span>}
+</div></code></pre>
+
+
+
+<h5 id="泛型和算法也可以结合程序运行离不开算法算法处理数据">泛型和算法也可以结合（程序运行离不开算法，算法处理数据）</h5>
+
+<blockquote>
+  <p>现代编程的三大技能：数据结构、算法、面向对象 <br>
+  泛型和三大技能都有关系</p>
+</blockquote>
+
+<ul><li><p>互为重载的方法的膨胀</p></li>
+</ul>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp11</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            <span class="hljs-keyword">int</span>[] a1 = { <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            <span class="hljs-keyword">int</span>[] a2 = { <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">0</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            <span class="hljs-keyword">double</span>[] a3 = { <span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            <span class="hljs-keyword">double</span>[] a4 = { <span class="hljs-number">4.0</span>, <span class="hljs-number">5.0</span>, <span class="hljs-number">6.0</span> };
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            <span class="hljs-keyword">var</span> res = Zip(a1, a2);
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            Console.WriteLine(<span class="hljs-keyword">string</span>.Join(<span class="hljs-string">","</span>,res));
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            <span class="hljs-keyword">var</span> res2 = Zip(a3, a4);
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            Console.WriteLine(<span class="hljs-keyword">string</span>.Join(<span class="hljs-string">","</span>,res2));
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] <span class="hljs-title">Zip</span>(<span class="hljs-params"><span class="hljs-keyword">int</span>[] a, <span class="hljs-keyword">int</span>[] b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>            <span class="hljs-keyword">int</span>[] zipped = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[a.Length + b.Length];
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span>            <span class="hljs-keyword">int</span> ai = <span class="hljs-number">0</span>, bi = <span class="hljs-number">0</span>, ci = <span class="hljs-number">0</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>            <span class="hljs-keyword">do</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>                <span class="hljs-keyword">if</span> (ai &lt; a.Length) zipped[ci++] = a[ai++];
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>                <span class="hljs-keyword">if</span> (bi &lt; a.Length) zipped[ci++] = b[bi++];
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span>            } <span class="hljs-keyword">while</span> (ai &lt; a.Length || bi &lt; b.Length);
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span>            <span class="hljs-keyword">return</span> zipped;
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">double</span>[] <span class="hljs-title">Zip</span>(<span class="hljs-params"><span class="hljs-keyword">double</span>[] a, <span class="hljs-keyword">double</span>[] b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">35.</span><span class="hljs-function">        </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">36.</span>            <span class="hljs-keyword">double</span>[] zipped = <span class="hljs-keyword">new</span> <span class="hljs-keyword">double</span>[a.Length + b.Length];
+</div><div class="hljs-line"><span class="hljs-comment line-number">37.</span>            <span class="hljs-keyword">int</span> ai = <span class="hljs-number">0</span>, bi = <span class="hljs-number">0</span>, ci = <span class="hljs-number">0</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">38.</span>            <span class="hljs-keyword">do</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">39.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">40.</span>                <span class="hljs-keyword">if</span> (ai &lt; a.Length) zipped[ci++] = a[ai++];
+</div><div class="hljs-line"><span class="hljs-comment line-number">41.</span>                <span class="hljs-keyword">if</span> (bi &lt; a.Length) zipped[ci++] = b[bi++];
+</div><div class="hljs-line"><span class="hljs-comment line-number">42.</span>            } <span class="hljs-keyword">while</span> (ai &lt; a.Length || bi &lt; b.Length);
+</div><div class="hljs-line"><span class="hljs-comment line-number">43.</span>            <span class="hljs-keyword">return</span> zipped;
+</div><div class="hljs-line"><span class="hljs-comment line-number">44.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">45.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">46.</span>}
+</div></code></pre>
+
+<ul><li><p>使用泛型后：</p></li>
+</ul>
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs mipsasm"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>using System<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>namespace ConsoleApp11
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    class Program
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    {
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>        static void Main(string[] args)
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>            int[] <span class="hljs-built_in">a1</span> = { <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span> }<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>            int[] <span class="hljs-built_in">a2</span> = { <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">0</span> }<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>            double[] <span class="hljs-built_in">a3</span> = { <span class="hljs-number">1</span>.<span class="hljs-number">0</span>, <span class="hljs-number">2</span>.<span class="hljs-number">0</span>, <span class="hljs-number">3</span>.<span class="hljs-number">0</span> }<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>            double[] <span class="hljs-built_in">a4</span> = { <span class="hljs-number">4</span>.<span class="hljs-number">0</span>, <span class="hljs-number">5</span>.<span class="hljs-number">0</span>, <span class="hljs-number">6</span>.<span class="hljs-number">0</span> }<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>            var res = Zip(<span class="hljs-built_in">a1</span>, <span class="hljs-built_in">a2</span>)<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span>            Console.WriteLine(string.<span class="hljs-keyword">Join(",", </span>res))<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span>            var res2 = Zip(<span class="hljs-built_in">a3</span>, <span class="hljs-built_in">a4</span>)<span class="hljs-comment">;//这里就不需要显示指定Zip&lt;T&gt;的类型了，这叫做：泛型方法在调用时，类型参数的自动推断！</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">19.</span>            Console.WriteLine(string.<span class="hljs-keyword">Join(",", </span>res2))<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">20.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">21.</span><wbr>
+</div><div class="hljs-line"><span class="hljs-comment line-number">22.</span>        static T[] Zip&lt;T&gt;(T[] a, T[] <span class="hljs-keyword">b)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">23.</span><span class="hljs-keyword"></span>        {
+</div><div class="hljs-line"><span class="hljs-comment line-number">24.</span>            T[] zipped = new T[a.Length + <span class="hljs-keyword">b.Length];</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">25.</span><span class="hljs-keyword"></span>            int ai = <span class="hljs-number">0</span>, <span class="hljs-keyword">bi </span>= <span class="hljs-number">0</span>, ci = <span class="hljs-number">0</span><span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">26.</span>            do
+</div><div class="hljs-line"><span class="hljs-comment line-number">27.</span>            {
+</div><div class="hljs-line"><span class="hljs-comment line-number">28.</span>                if (ai &lt; a.Length) zipped[ci++] = a[ai++]<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">29.</span>                if (<span class="hljs-keyword">bi </span>&lt; a.Length) zipped[ci++] = <span class="hljs-keyword">b[bi++];</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">30.</span><span class="hljs-keyword"></span>            } while (ai &lt; a.Length <span class="hljs-title">||</span> <span class="hljs-keyword">bi </span>&lt; <span class="hljs-keyword">b.Length);</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">31.</span><span class="hljs-keyword"></span>            return zipped<span class="hljs-comment">;</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">32.</span>        }
+</div><div class="hljs-line"><span class="hljs-comment line-number">33.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">34.</span>}
+</div></code></pre>
+
+<hr>
+
+<p><a class="btn btn-primary" style="width:100%" href="#top">Top</a></p></div></body></html>

@@ -1,0 +1,2164 @@
+<!DOCTYPE html><html><head><title>类</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<div id="top"></div>
+
+
+
+<h2 id="类">类</h2>
+
+
+
+<h6 id="类是一种数据结构"><span style="color:pink">类是一种数据结构</span></h6>
+
+<blockquote>
+  <ol><li rel="1"><p>类中若不写构造器，默认有一个无参数的空构造器</p></li>
+  <li rel="2"><p>若写了一个非默认构造器（即有参数的构造器：初始化参数：实例构造器），不会默认生成默认构造器（空构造器）</p></li>
+  </ol>
+</blockquote>
+
+
+
+<h5 id="用反射获取类的实例化对象即不用new操作符创建对象">用反射获取类的实例化对象(即不用new操作符创建对象)</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Type t = <span class="hljs-keyword">typeof</span>(Teacher);
+</div><div class="hljs-line">            <span class="hljs-keyword">object</span> a = Activator.CreateInstance(t,<span class="hljs-string">"nmae"</span>,<span class="hljs-number">2</span>);<span class="hljs-comment">//因为有实例构造器，所以要传参</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">//Console.WriteLine(a.GetType().Name);//Teacher</span>
+</div><div class="hljs-line">            <span class="hljs-comment">//Console.WriteLine(a is Teacher);//True</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> teacher = (Teacher)a;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            teacher.Count = <span class="hljs-number">40</span>;<span class="hljs-comment">//若此处不赋值，则下面输出默认值 0</span>
+</div><div class="hljs-line">            Console.WriteLine(teacher.Count);<span class="hljs-comment">//40</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(teacher.Age);<span class="hljs-comment">//2</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            teacher.Say();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Teacher</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">string</span> Name;
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Age;
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Count;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Teacher</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> Name,<span class="hljs-keyword">int</span> Age</span>)<span class="hljs-comment">//快捷键：ctor+Tab键*2</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Name = Name;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Age = Age;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Say</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">$"Name is <span class="hljs-subst">{Name}</span>,Age is <span class="hljs-subst">{Age}</span>"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h5 id="更进一步的dynamic编程">更进一步的Dynamic编程</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Type t = <span class="hljs-keyword">typeof</span>(Teacher);
+</div><div class="hljs-line">            <span class="hljs-keyword">dynamic</span> teacher = Activator.CreateInstance(t, <span class="hljs-string">"NAME"</span>, <span class="hljs-number">20</span>);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            teacher.Say();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(teacher.Age);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Teacher</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">string</span> Name;
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Age;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Teacher</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> Name,<span class="hljs-keyword">int</span> Age</span>)<span class="hljs-comment">//快捷键：ctor+Tab键*2</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Name = Name;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Age = Age;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Say</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">$"Name is <span class="hljs-subst">{Name}</span>,Age is <span class="hljs-subst">{Age}</span>"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>静态成员是对类有意义的 <br>
+  静态构造器：初始化类的静态成员，静态构造器必须无参数</p>
+</blockquote>
+
+
+
+<h5 id="构造器实例">构造器实例</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApp10</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Teacher t1 = <span class="hljs-keyword">new</span> Teacher(<span class="hljs-string">"t1"</span>, <span class="hljs-number">99</span>);
+</div><div class="hljs-line">            Teacher t2 = <span class="hljs-keyword">new</span> Teacher(<span class="hljs-string">"t2"</span>, <span class="hljs-number">98</span>);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(Teacher.Amount);<span class="hljs-comment">//102  :调用静态属性</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Teacher</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">string</span> Name;
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Age;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> Amount { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//该字段统计teacher数量</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-title">Teacher</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//静态构造器：初始化静态成员</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Amount = <span class="hljs-number">100</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Teacher</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> Name, <span class="hljs-keyword">int</span> Age</span>)<span class="hljs-comment">//快捷键：ctor+Tab键*2</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Name = Name;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Age = Age;
+</div><div class="hljs-line">            Amount++;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        ~ Teacher()<span class="hljs-comment">//析构器：当对象在内存里销毁时，数量也减掉</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Amount--;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>类是声明在名称空间内 <br>
+  哪怕不声明在自定义的显示名称空间内，也是在全局名称空间（gobal）内的 <br>
+  类也可以声明在类中，属于成员类，即是另一个类的成员 <br>
+  一般类就两种修饰符：internal(默认)，public <br>
+  成员类的修饰符可以是private <br>
+  类成员的访问级别是以类的访问级别为上限的 <br>
+  上一句：如果类是private；类中属性或方法哪怕是public；在类外也是无法访问这个类的方法或属性的 <br>
+  类都继承自Object这个基类，所以哪怕类体是空的，它也不空啊 <br>
+  C#和Java中：类的声明就是他的定义，声明和定义是合在一起的（<span style="background:yellow;color:red">声明即定义！</span>&lt;=只限于声明和定义合在一起的语言） <br>
+  上一句：类中方法声明了，换一个文件去实现它，两者合在一起完成类的声明和定义（类似于抽象类的继承与实现）</p>
+</blockquote>
+
+
+
+<h5 id="类的访问级别修饰符">类的访问级别修饰符</h5>
+
+<blockquote>
+  <ol><li rel="1"><p>新建.NET framework的控制台程序：项目A:myConsole</p></li>
+  <li rel="2"><p>在解决方案里添加一个类库项目:项目B:myLib <br>
+  上一步：在解决方案处右击-&gt;添加-&gt;新建项目-&gt;选择类库（.NET Standard）</p></li>
+  <li rel="3"><p>删除myLib下的class1.cs</p></li>
+  <li rel="4"><p>右击myLib添加新文件夹：myNamespace</p></li>
+  <li rel="5"><p>在myNamespace里面添加一个类：Calculator.cs（它里面的类必须是public修饰的） <br>
+  上面：如果不加public;类的默认访问修饰符是internal(只有类库内可以看到它，项目外无法使用这个类的，internal是项目级别的修饰符)</p>
+  
+  <hr color="garnet">
+  
+  <blockquote>
+    <p>myConsole这个项目如果要引用myLib这个类库：那么myConsole就依赖在myLib类库上（因为要用它，就会依赖它）</p>
+  </blockquote></li>
+  <li rel="6"><p>做依赖关系：myConsole项目引用myLib类库 <br>
+  上一步：右击myConsole下的引用-&gt;添加引用-&gt;找到“项目”添加即可</p></li>
+  </ol>
+</blockquote>
+
+
+
+<h6 id="mylib类库中mynamespace文件夹内calculatorcs">myLib类库中myNamespace文件夹内Calculator.cs</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myLib.myNamespace</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Calculator</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">Add</span>(<span class="hljs-params"><span class="hljs-keyword">double</span> a,<span class="hljs-keyword">double</span> b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> a + b;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h6 id="myconsole项目中programcs">myConsole项目中Program.cs</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> myLib.myNamespace;<span class="hljs-comment">//引用类库的命名空间</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-comment">//myLib.myNamespace.Calculator calculator = new myLib.myNamespace.Calculator();</span>
+</div><div class="hljs-line">            <span class="hljs-comment">//若不想上面那么长,可以引入命名空间：using myLib.myNamespace;</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Calculator calculator = <span class="hljs-keyword">new</span> Calculator();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(calculator.Add(<span class="hljs-number">1</span>, <span class="hljs-number">4</span>)); 
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>internal：将类的访问级别限制在本项目里：</p>
+  
+  <blockquote>
+    <p>项目级别：Assembly:也称装配集，程序集，程序组件</p>
+    
+    <blockquote>
+      <p>一般情况下每一个项目的编译结果就是一个程序集（.dll/.exe） <br>
+      .dll:类库 <br>
+      .exe:可执行文件 <br>
+      常见装配集就上面两种</p>
+      
+      <blockquote>
+        <p><span style="background:silver">配置编译结果：右击项目—&gt;属性</span></p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+</blockquote>
+
+
+
+<h6 id="internal修饰的类在本项目中访问实例">internal修饰的类在本项目中访问实例：</h6>
+
+<blockquote>
+  <p>Calculator.cs</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myLib.myNamespace</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Calculator</span><span class="hljs-comment">//默认访问级别：internal</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">Add</span>(<span class="hljs-params"><span class="hljs-keyword">double</span> a,<span class="hljs-keyword">double</span> b</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> a + b;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>在myLib项目下新建文件夹myNamespace2(和myNamespace文件夹同一级别) <br>
+  在myNamespace2中新建类文件：Class.cs</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> myLib.myNamespace;<span class="hljs-comment">//引入命名空间</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myLib.myNamespace2</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">   <span class="hljs-keyword">class</span> <span class="hljs-title">Class</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> Calculator Calculator { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//Assembly：装配集，程序集，程序组件：一般情况下每一个项目的编译结果就是一个程序集（.dll/.exe）</span>
+</div><div class="hljs-line">        <span class="hljs-comment">//此处说明：在myLib项目里可以自由访问internal修饰的类（Calculator）</span>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>public Calculator Calculator { get; set; } <br>
+  <span style="background:yellow">上面快捷键：光标在第一个Calculator上，按F12可以跳到它定义处，再按Ctrl+”-“键，返回来</span></p>
+</blockquote>
+
+<hr>
+
+<blockquote>
+  <p>多态是基于继承的 <br>
+  .NET所有类型的继承链的顶端都是：Object类 <br>
+  上一句：.NET的类型系统是单根的 <br>
+  sealed类不能被继承;   即它不能作为父类使用 <br>
+  C#是单继承： 一个类只能有一个基类，但是可以有多个基接口 <br>
+  子类的访问级别不能超越基类的访问级别，可以持平或更低</p>
+</blockquote>
+
+
+
+<h6 id="用程序证明类的派生">用程序证明类的派生：</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> myLib.myNamespace2;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Type t = <span class="hljs-keyword">typeof</span>(Car);
+</div><div class="hljs-line">            Type tt = t.BaseType;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(tt.FullName);<span class="hljs-comment">//myConsole.Vehicle:此处证明了Car类是从Vehicle类中派生出来的</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Type ttTop = tt.BaseType;
+</div><div class="hljs-line">            Console.WriteLine(ttTop.FullName);<span class="hljs-comment">//System.Object:此处证明所有的类都是从Object类继承过来的</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(ttTop.BaseType==<span class="hljs-literal">null</span>);<span class="hljs-comment">//True:证明Object类是没有基类的，它是继承链的顶端</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>是一个：is a</p>
+  
+  <blockquote>
+    <p>一个子类的实例也是父类的实例</p>
+  </blockquote>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs dart"><div class="hljs-line">Car car = <span class="hljs-keyword">new</span> Car();
+</div><div class="hljs-line">Console.WriteLine(car <span class="hljs-keyword">is</span> Vehicle);<span class="hljs-comment">//True:证明派生类的实例也是基类的实例</span>
+</div><div class="hljs-line">Console.WriteLine(car <span class="hljs-keyword">is</span> <span class="hljs-built_in">Object</span>);<span class="hljs-comment">//True:证明任意类的实例都是顶层类的实例</span>
+</div></code></pre>
+
+<blockquote>
+  <p>用父类类型的变量来引用一个子类类型的实例</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs haxe"><div class="hljs-line">Vehicle veh = <span class="hljs-keyword">new</span> <span class="hljs-type">Car</span>();<span class="hljs-comment">//用父类类型的变量来引用一个子类类型的实例</span>
+</div><div class="hljs-line">Object o1 = <span class="hljs-keyword">new</span> <span class="hljs-type">Vehicle</span>();
+</div><div class="hljs-line">Object o2 = <span class="hljs-keyword">new</span> <span class="hljs-type">Car</span>();
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>上面是继承的现象 <br>
+  <span style="background:yellow">继承的本质：子类在完整接受父类成员的前提下，对父类的横向或纵向的扩展</span>：类成员数量的扩充（横）+类成员的版本的更新（纵）（对类成员的重写） <br>
+  继承特点：全盘继承，只能增加，不能移除 <br>
+  快捷键：<span style="background:yellow">F12:跳转到定义处||Ctrl+”-“:跳回</span></p>
+</blockquote>
+
+
+
+<h6 id="全盘继承">全盘继承</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> myLib.myNamespace2;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            RaceCar raceCar = <span class="hljs-keyword">new</span> RaceCar();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            raceCar.Owner = <span class="hljs-string">"a"</span>;<span class="hljs-comment">//全盘继承</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            raceCar.ToString();<span class="hljs-comment">//ToString()方法是定义在顶层基类Object中的</span>
+</div><div class="hljs-line">            <span class="hljs-comment">//快捷键：光标放到ToString()上按F12；按Ctrl+ "-"即可返回</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Owner { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">RaceCar</span> : <span class="hljs-title">Car</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <ol><li rel="1"><p>继承链上的类，当创建一个类的实例时，从基类的构造器开始执行，先构造基类对象，再一级一级向下构造，最终构造出来这个子类的对象。</p></li>
+  <li rel="2"><p>在子类访问基类的对象用base关键字：base引用的对象就是基类对象，是基类的构造器构造出来的；base只能向上访问一级 <br>
+  说明：当在调用一个子类对象时，它父类的构造器也是会被调用的</p></li>
+  </ol>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> myLib.myNamespace2;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Car car = <span class="hljs-keyword">new</span> Car();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            car.ShowOwner();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Owner { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Vehicle</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//构造器</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Owner = <span class="hljs-string">"N/A"</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Car</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//构造器</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Owner = <span class="hljs-string">"Car Owner"</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ShowOwner</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-keyword">base</span>.Owner);<span class="hljs-comment">//base引用的对象就是基类对象，是基类的构造器构造出来的</span>
+</div><div class="hljs-line">            Console.WriteLine(Owner);
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-keyword">this</span>.Owner);<span class="hljs-comment">//本例中三句都返回：Car Owner(本例中都一样)</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h6 id="结果">结果：</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs sqf"><div class="hljs-line">Car <span class="hljs-built_in">Owner</span>
+</div><div class="hljs-line">Car <span class="hljs-built_in">Owner</span>
+</div><div class="hljs-line">Car <span class="hljs-built_in">Owner</span>
+</div><div class="hljs-line">请按任意键继续. . .
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p><span style="background:yellow">父类的实例构造器是不能被子类继承的</span></p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Car car = <span class="hljs-keyword">new</span> Car(<span class="hljs-string">"abc"</span>);
+</div><div class="hljs-line">            Console.WriteLine(car.Owner);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Owner { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Vehicle</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> Owner</span>)<span class="hljs-comment">//构造器</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Owner = Owner;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Car</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> owner</span>):<span class="hljs-title">base</span>(<span class="hljs-params">owner</span>)<span class="hljs-comment">//构造器</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-comment">//this.Owner = owner;//这句多余了</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-comment">//因为在基类构造器里已经把Owner的值设置为owner参数的值了，所以没必要在Car的构造器中再设置一次，让Car的构造器空着就可以了</span>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>封装:为了数据的安全性 <br>
+  封装的意义：尽可能少的把数据和行为从类里暴露到外面 <br>
+  private:只限类体内访问（属性或方法的默认访问级别） <br>
+  internal：只限程序级内，即同一个项目内可访问（类的默认访问级别） <br>
+  public：完全暴露出来，任何人可访问（接口的默认访问级别）</p>
+  
+  <blockquote>
+    <p>父类中若有Private修饰的方法或属性，子类可以继承过来，但不能访问</p>
+  </blockquote>
+</blockquote>
+
+
+
+<h6 id="证明private的属性被子类继承了的">证明private的属性被子类继承了的</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Car car = <span class="hljs-keyword">new</span> Car();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            car.Jia();
+</div><div class="hljs-line">            car.Jia();
+</div><div class="hljs-line">            Console.WriteLine(car.Show());
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> Speed { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Jia</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Speed += <span class="hljs-number">10</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Show</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> Speed;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <ol><li rel="1"><p>重新类中的方法需要用override;用new的话是覆盖（隐藏父类同名方法）</p></li>
+  <li rel="2"><p>父类的方法被重写的前提是要有virtual（虚方法；可被重写的方法；名存实亡的方法）</p></li>
+  <li rel="3"><p>子类若重写的父类方法没有用virtual修饰，则重写时必须用new来修饰：即隐藏父类中同名方法，防止调用时混淆</p></li>
+  <li rel="4"><p>override和new的区别：override是子类对父类的方法的更新，一旦被重写，父类中该方法（虚方法）就名存实亡了，new是两个方法只是重名，子类和父类各自拥有自己的方法，是两个完全独立的方法，new是隐藏父类中方法的作用，防止调用时混淆了（一个是base;一个是this）</p></li>
+  <li rel="5"><p><span style="color:red">多态：</span></p>
+  
+  <blockquote>
+    <p><span style="background:yellow">基于重写机制的（virtual-&gt;override）</span> <br>
+    函数成员的具体行为（版本）由对象决定</p>
+  </blockquote></li>
+  </ol>
+</blockquote>
+
+
+
+<h5 id="new隐藏父类同名方法时">new：隐藏父类同名方法时：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Vehicle vehicle = <span class="hljs-keyword">new</span> Car();
+</div><div class="hljs-line">            vehicle.Run();<span class="hljs-comment">//父类该方法并没有被重写</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Vehicle is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> new <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h6 id="结果-1">结果:</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs applescript"><div class="hljs-line">Vehicle <span class="hljs-keyword">is</span> <span class="hljs-built_in">run</span>
+</div><div class="hljs-line">请按任意键继续. . .
+</div></code></pre>
+
+
+
+<h5 id="override重新父类同名方法时">override:重新父类同名方法时：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Vehicle vehicle = <span class="hljs-keyword">new</span> Car();
+</div><div class="hljs-line">            vehicle.Run();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Vehicle is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h6 id="结果-2">结果：</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs applescript"><div class="hljs-line">Car <span class="hljs-keyword">is</span> <span class="hljs-built_in">run</span>
+</div><div class="hljs-line">请按任意键继续. . .
+</div></code></pre>
+
+<hr>
+
+
+
+<h5 id="一定是调用继承链上该方法最新的版本">一定是调用继承链上该方法最新的版本，</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Vehicle vehicle = <span class="hljs-keyword">new</span> RaseCar();
+</div><div class="hljs-line">            vehicle.Run();<span class="hljs-comment">//Car is run</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            RaseCar raseCar = <span class="hljs-keyword">new</span> RaseCar();
+</div><div class="hljs-line">            raseCar.Run();<span class="hljs-comment">//RaseCar is run</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Vehicle is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//该方法的最新版本</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">RaseCar</span> : <span class="hljs-title">Car</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//并不是重写，而是一个新的方法，只是重名而已，这里需要用new修饰，来隐藏父类中同名方法</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"RaseCar is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>属性也可以被重写</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Vehicle vehicle = <span class="hljs-keyword">new</span> RaseCar();
+</div><div class="hljs-line">            vehicle.Run();<span class="hljs-comment">//raseCar is run 20</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _speed;
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">int</span> Speed { <span class="hljs-keyword">get</span> { <span class="hljs-keyword">return</span> _speed; } <span class="hljs-keyword">set</span> { _speed = <span class="hljs-keyword">value</span>; } }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">$"Vehicle is run <span class="hljs-subst">{Speed}</span>"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is run"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">RaseCar</span> : <span class="hljs-title">Car</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _rpm;
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> Speed<span class="hljs-comment">//Speed这个属性的重写</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">get</span>
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> _rpm * <span class="hljs-number">2</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">set</span>
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                _rpm = <span class="hljs-keyword">value</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _rpm = <span class="hljs-number">10</span>;
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">$"RaseCar is run <span class="hljs-subst">{Speed}</span>"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>具体类（普通类）-&gt;抽象类-&gt;接口 <br>
+  抽象类为复用而生，具有解耦功能。（未完全实现的类） <br>
+  封装确定的，开放不确定的，推迟到合适的子类中去实现 <br>
+  接口为解耦而生，高内聚，低耦合，方便单元测试（纯虚类）（完全未实现的类） <br>
+  接口是一个“协约”（有分工必有协作，有协作必有协约）</p>
+  
+  <ul><li><p>开闭原则：封装不变的，稳定的，固定的和确定的成员，而那些不确定的，有可能改变的成员声明为抽象成员，由子类去实现 <br>
+  对于抽象类中方法的实现也是要加override的</p></li>
+  <li><p>public virtual void Run(){ }：纯虚方法（下面是此方法的进化）</p></li>
+  <li><p>public abstract void Run()：抽象方法</p></li>
+  </ul>
+</blockquote>
+
+
+
+<h5 id="为做基类而生的抽象类和开闭原则">为做基类而生的抽象类和开闭原则</h5>
+
+
+
+<h6 id="纯虚方法空方法但是必须有方法体">纯虚方法：空方法，但是必须有方法体</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Vehicle vehicle = <span class="hljs-keyword">new</span> Car();
+</div><div class="hljs-line">            vehicle.Run();
+</div><div class="hljs-line">            vehicle.Stop();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>) </span>{ }<span class="hljs-comment">//纯虚方法</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Stopped"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span>:<span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is running....."</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Truck</span> : <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Truck is running...."</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>将上例中Vehicle类中的纯虚方法写成抽象方法：（此时这个类也变成了抽象类）</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Vehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//抽象方法</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Stopped"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>接口的产生：自底向上（重构），自顶向下（设计） <br>
+  接口中所有成员必须是public，当然接口也必须是public</p>
+</blockquote>
+
+
+
+<h6 id="1-对int-计算的两方法">1. 对int[ ]计算的两方法：</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span>[] array = { <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span> };<span class="hljs-comment">//Array类型</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(Sum(array));
+</div><div class="hljs-line">            Console.WriteLine(Avg(array));
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Sum</span>(<span class="hljs-params"><span class="hljs-keyword">int</span>[] array</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span> Num = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> array)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                Num += i;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> Num;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">double</span> <span class="hljs-title">Avg</span>(<span class="hljs-params"><span class="hljs-keyword">int</span>[] array</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">double</span> Num = <span class="hljs-number">0</span>;<span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> array)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                Num += i;
+</div><div class="hljs-line">                count++;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> Num / count;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h6 id="2-对arraylist操作的两方法">2. 对arrayList操作的两方法：</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;<span class="hljs-comment">//引入ArrayList的命名空间</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            ArrayList arrayList = <span class="hljs-keyword">new</span> ArrayList{ <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">10</span> };<span class="hljs-comment">//object类型</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(Sum(arrayList));
+</div><div class="hljs-line">            Console.WriteLine(Avg(arrayList));
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Sum</span>(<span class="hljs-params">ArrayList array</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span> Num = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> array)<span class="hljs-comment">//array是object类型，需要转换</span>
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                Num += (<span class="hljs-keyword">int</span>)i;<span class="hljs-comment">//需要强制转换</span>
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> Num;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">double</span> <span class="hljs-title">Avg</span>(<span class="hljs-params">ArrayList array</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">double</span> Num = <span class="hljs-number">0</span>;<span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> array)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                Num += (<span class="hljs-keyword">int</span>)i;
+</div><div class="hljs-line">                count++;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> Num / count;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>Array类型和Object类型：（F12）</p>
+  
+  <blockquote>
+    <p>他们在定义时，都实现了IEnumerable接口</p>
+    
+    <blockquote>
+      <p>public class Array:IEnumerable{…….} <br>
+      public class ArrayLIst:IEnumerable{……}</p>
+    </blockquote>
+  </blockquote>
+  
+  <p>故方法参数类型可以写成IEnumerable;这样就可以省写了多余的重复方法</p>
+  
+  <blockquote>
+    <p>public int Num(int[] array){…..} <br>
+    public int Num(ArrayList array){……}</p>
+    
+    <blockquote>
+      <p>合二为一：</p>
+      
+      <blockquote>
+        <p>public int Num(IEnumerable array){…….}</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+</blockquote>
+
+
+
+<h5 id="对上两例中两不同类型数据都操作">对上两例中两不同类型数据都操作</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs arduino"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> myConsole3
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> Program
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span>[] <span class="hljs-keyword">array</span> = { <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span> };<span class="hljs-comment">//Array类型</span>
+</div><div class="hljs-line">            ArrayList arrayList = <span class="hljs-keyword">new</span> ArrayList{ <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">10</span> };<span class="hljs-comment">//object类型</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-built_in">Console</span>.WriteLine(Sum(<span class="hljs-keyword">array</span>));
+</div><div class="hljs-line">            <span class="hljs-built_in">Console</span>.WriteLine(Avg(<span class="hljs-keyword">array</span>));
+</div><div class="hljs-line">            <span class="hljs-built_in">Console</span>.WriteLine(Sum(arrayList));
+</div><div class="hljs-line">            <span class="hljs-built_in">Console</span>.WriteLine(Avg(arrayList));
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> Sum(IEnumerable <span class="hljs-keyword">array</span>)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span> Num = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            foreach (var i in <span class="hljs-keyword">array</span>)<span class="hljs-comment">//array是object类型，需要转换</span>
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                Num += (<span class="hljs-keyword">int</span>)i;<span class="hljs-comment">//需要强制转换</span>
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-built_in">return</span> Num;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-keyword">static</span> <span class="hljs-keyword">double</span> Avg(IEnumerable <span class="hljs-keyword">array</span>)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">double</span> Num = <span class="hljs-number">0</span>;<span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            foreach (var i in <span class="hljs-keyword">array</span>)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                Num += (<span class="hljs-keyword">int</span>)i;
+</div><div class="hljs-line">                count++;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-built_in">return</span> Num / count;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>下方解决办法：引入进口</p>
+</blockquote>
+
+
+
+<h6 id="依赖关系尽可能避免紧耦合紧耦合团队的进度取决于最慢的那个人因为相互依赖他不完成整体无法正常运行">依赖关系：(尽可能避免紧耦合)（紧耦合：团队的进度取决于最慢的那个人，因为相互依赖，他不完成，整体无法正常运行）</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Engine engine = <span class="hljs-keyword">new</span> Engine();
+</div><div class="hljs-line">            Car car = <span class="hljs-keyword">new</span> Car(engine);
+</div><div class="hljs-line">            car.Run(<span class="hljs-number">3</span>);
+</div><div class="hljs-line">            Console.WriteLine(car.Speed);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Engine</span><span class="hljs-comment">//引擎</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> RPM{ <span class="hljs-keyword">get</span>; <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }<span class="hljs-comment">//转速</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Work</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> gas</span>)<span class="hljs-comment">//gas给油量</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.RPM = <span class="hljs-number">1000</span> * gas;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span><span class="hljs-comment">//依赖引擎</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> Engine _engine;<span class="hljs-comment">//依赖</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Car</span>(<span class="hljs-params">Engine engine</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _engine = engine;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Speed { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> gas</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _engine.Work(gas);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.Speed = _engine.RPM / <span class="hljs-number">100</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h5 id="为解耦和而生的接口">为解耦和而生的接口：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            User user = <span class="hljs-keyword">new</span> User(<span class="hljs-keyword">new</span> Nokia());<span class="hljs-comment">//只用改括号中实例对象参数，即可使用不同类，无需修改类（反射也可以实现这个，比他还简便）</span>
+</div><div class="hljs-line">            user.UsePhone();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            User user2 = <span class="hljs-keyword">new</span> User(<span class="hljs-keyword">new</span> Hinner());
+</div><div class="hljs-line">            user2.UsePhone();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">User</span><span class="hljs-comment">//用户</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> IPhone _iphone { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">User</span>(<span class="hljs-params">IPhone iphone</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _iphone = iphone;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">UsePhone</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _iphone.Dail();
+</div><div class="hljs-line">            _iphone.Send();
+</div><div class="hljs-line">            _iphone.PickUp();
+</div><div class="hljs-line">            _iphone.Receive();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">IPhone</span><span class="hljs-comment">//电话接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Dail</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//拨号</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">PickUp</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//接电话</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Send</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//发信息</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//接受信息</span>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Nokia</span> : <span class="hljs-title">IPhone</span><span class="hljs-comment">//此处快捷键实现接口中抽象方法：Ctrl+.然后Enter</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Dail</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Nokia is call"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PickUp</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Nokia is PickUp"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Nokia is Receive"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Send</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Nokia is Send"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Hinner</span> : <span class="hljs-title">IPhone</span><span class="hljs-comment">//此处快捷键实现接口中抽象方法：Ctrl+.然后Enter</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Dail</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Hinner is call"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PickUp</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Hinner is PickUp"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Hinner is Receive"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Send</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Hinner is Send"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h6 id="结果-3">结果：</h6>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs vbnet"><div class="hljs-line">Nokia <span class="hljs-keyword">is</span> <span class="hljs-keyword">call</span>
+</div><div class="hljs-line">Nokia <span class="hljs-keyword">is</span> Send
+</div><div class="hljs-line">Nokia <span class="hljs-keyword">is</span> PickUp
+</div><div class="hljs-line">Nokia <span class="hljs-keyword">is</span> Receive
+</div><div class="hljs-line">Hinner <span class="hljs-keyword">is</span> <span class="hljs-keyword">call</span>
+</div><div class="hljs-line">Hinner <span class="hljs-keyword">is</span> Send
+</div><div class="hljs-line">Hinner <span class="hljs-keyword">is</span> PickUp
+</div><div class="hljs-line">Hinner <span class="hljs-keyword">is</span> Receive
+</div><div class="hljs-line">请按任意键继续. . .
+</div></code></pre>
+
+<blockquote>
+  <p>解耦在代码中的表现就是依赖倒置，也称依赖反转 <br>
+  单元测试是依赖反转在开发当中的直接应用和直接受益者</p>
+  
+  <div style="background:yellow">当类实现一个接口时，他们之间关系也是“紧耦合”</div>
+  
+  <p>依赖反转原则：</p>
+  
+  <blockquote>
+    <p>依赖：服务的使用者和服务的提供者之间的关系 <br>
+    服务的使用者依赖在服务的提供者之上 <br>
+    依赖越直接，耦合越紧密 <br>
+    服务的提供者出问题，服务的使用者也会跟着出问题 <br>
+    </p><hr color="red"> <br>
+    单元测试：<p></p>
+    
+    <blockquote>
+      <p>测试资源管理器打开方式：测试-&gt;窗口-&gt;测试资源管理器-&gt;左侧即显示 <br>
+      前提：被测试的类必须都是public</p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+
+
+
+<h5 id="紧耦合的不方便实例">紧耦合的不方便实例：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            DeskFan deskFan = <span class="hljs-keyword">new</span> DeskFan(<span class="hljs-keyword">new</span> PowerSupply());
+</div><div class="hljs-line">            Console.WriteLine(deskFan.Work()); 
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">PowerSupply</span><span class="hljs-comment">//电源类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">GetPower</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> <span class="hljs-number">210</span>;<span class="hljs-comment">//这里需要不停的修改，比较麻烦</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">DeskFan</span><span class="hljs-comment">//电扇类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> PowerSupply _powerSupply;<span class="hljs-comment">//紧耦合电源类</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DeskFan</span>(<span class="hljs-params">PowerSupply powerSupply</span>)<span class="hljs-comment">//构造器</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _powerSupply = powerSupply;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> <span class="hljs-title">Work</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//根据不同的电压有不同的反应</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span> power = _powerSupply.GetPower();
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (power &lt;= <span class="hljs-number">0</span>)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"on PowerSupply"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">power&lt;<span class="hljs-number">100</span></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">            </span>{
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"low PowerSupply"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">power&lt;=<span class="hljs-number">220</span></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">            </span>{
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"Working"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">else</span>
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"High PowerSupply"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h5 id="用接口解耦上面实例中的紧耦合">用接口解耦上面实例中的紧耦合：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole3</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            DeskFan deskFan = <span class="hljs-keyword">new</span> DeskFan(<span class="hljs-keyword">new</span> PowerSupply());
+</div><div class="hljs-line">            Console.WriteLine(deskFan.Work()); 
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IPowerSupply</span><span class="hljs-comment">//电源接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">GetPower</span>(<span class="hljs-params"></span>)</span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">PowerSupply</span>:<span class="hljs-title">IPowerSupply</span><span class="hljs-comment">//电源类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">GetPower</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> <span class="hljs-number">210</span>;<span class="hljs-comment">//这里需要不停的修改，比较麻烦</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DeskFan</span><span class="hljs-comment">//电扇类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> IPowerSupply _powerSupply;<span class="hljs-comment">//紧耦合电源类</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DeskFan</span>(<span class="hljs-params">IPowerSupply powerSupply</span>)<span class="hljs-comment">//构造器</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _powerSupply = powerSupply;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> <span class="hljs-title">Work</span>(<span class="hljs-params"></span>)<span class="hljs-comment">//根据不同的电压有不同的反应</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span> power = _powerSupply.GetPower();
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (power &lt;= <span class="hljs-number">0</span>)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"on PowerSupply"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">power&lt;<span class="hljs-number">100</span></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">            </span>{
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"low PowerSupply"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">power&lt;=<span class="hljs-number">220</span></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">            </span>{
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"Working"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">else</span>
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> <span class="hljs-string">"High PowerSupply"</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">} 
+</div></code></pre>
+
+<blockquote>
+  <p>单元测试写法： <br>
+  解决方案上右击新建项目 <br>
+  根据项目是.NET framework和.NET core不同创建不同的单元测试项目 <br>
+  .NET core选择xUnit测试项目 <br>
+  命名：被测试项目名称.Tests <br>
+  在测试单元项目中引用被测试项目 <br>
+  Assert.AreEqual(object,object):验证指定的值是否相等。验证指定的两个对象是否相等。如果两个对象不相等，则断言失败。 <br>
+  Assert类：断言类：帮助类的集合，用于测试单元测试中的各种条件。如果不满足正在测试的条件，则抛出异常。</p>
+</blockquote>
+
+
+
+<h5 id="单元测试代码">单元测试代码：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> Microsoft.VisualStudio.TestTools.UnitTesting;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> myConsole;<span class="hljs-comment">//引入项目命名空间</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole.Tests</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    [TestClass]
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DeskFanTest</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        [TestMethod]
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PowerLowerThanZero_OK</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> fan = <span class="hljs-keyword">new</span> DeskFan(<span class="hljs-keyword">new</span> PowerSupplyLowerThanZero());
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> expected = <span class="hljs-string">"no PowerSupply"</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> actual=fan.Work();
+</div><div class="hljs-line">            Assert.AreEqual(expected, actual);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        [TestMethod]
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PowerSupplyHighThan220</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> fan = <span class="hljs-keyword">new</span> DeskFan(<span class="hljs-keyword">new</span> PowerSupplyHighThan220());
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> expected = <span class="hljs-string">"High PowerSupply"</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> actual = fan.Work();
+</div><div class="hljs-line">            Assert.AreEqual(expected, actual);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">PowerSupplyLowerThanZero</span> : <span class="hljs-title">IPowerSupply</span><span class="hljs-comment">//测试电源:电源接口实现类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">GetPower</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">PowerSupplyHighThan220</span> : <span class="hljs-title">IPowerSupply</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">GetPower</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> <span class="hljs-number">230</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h5 id="简化上例防止测试一个数据就要写一个电源接口实现类">简化上例：防止测试一个数据就要写一个电源接口实现类</h5>
+
+<blockquote>
+  <p>添加依赖项：NuGet程序包：moq <br>
+  代码中添加名称空间：using Moq;</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> Microsoft.VisualStudio.TestTools.UnitTesting;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> myConsole;<span class="hljs-comment">//引入项目命名空间</span>
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> Moq;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole.Tests</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    [TestClass]
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DeskFanTest</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        [TestMethod]
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PowerLowerThanZero_OK</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> mock = <span class="hljs-keyword">new</span> Mock&lt;IPowerSupply&gt;();
+</div><div class="hljs-line">            mock.Setup(ps =&gt; ps.GetPower()).Returns(() =&gt; <span class="hljs-number">0</span>);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">//var fan = new DeskFan(new PowerSupplyLowerThanZero());</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> fan = <span class="hljs-keyword">new</span> DeskFan(mock.Object);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> expected = <span class="hljs-string">"no PowerSupply"</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> actual=fan.Work();
+</div><div class="hljs-line">            Assert.AreEqual(expected, actual);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        [TestMethod]
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PowerSupplyHighThan220</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> mock = <span class="hljs-keyword">new</span> Mock&lt;IPowerSupply&gt;();
+</div><div class="hljs-line">            mock.Setup(ps =&gt; ps.GetPower()).Returns(() =&gt; <span class="hljs-number">230</span>);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> fan = <span class="hljs-keyword">new</span> DeskFan(mock.Object);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">//var fan = new DeskFan(new PowerSupplyHighThan220());</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> expected = <span class="hljs-string">"High PowerSupply"</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> actual = fan.Work();
+</div><div class="hljs-line">            Assert.AreEqual(expected, actual);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h5 id="接口隔离原则">接口隔离原则:</h5>
+
+<blockquote>
+  <ol><li rel="1"><p>客户端不应该依赖它不需要的接口</p></li>
+  <li rel="2"><p>类间的依赖关系应该建立在最小的接口上</p>
+  
+  <blockquote>
+    <p>建立接口时，尽量建立单一，不臃肿庞大的接口，尽量使接口细化，方法尽量少。 <br>
+    把本质不同的功能隔离开，再用接口给他封装起来。 <br>
+    胖接口进行拆分成各个小接口，每个小接口都描述一个单一的功能。</p>
+  </blockquote></li>
+  </ol>
+</blockquote>
+
+
+
+<h4 id="title">#</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">       <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Driver driver = <span class="hljs-keyword">new</span> Driver(<span class="hljs-keyword">new</span> Car());<span class="hljs-comment">//这个实例只能开Car和Truck</span>
+</div><div class="hljs-line">            driver.Drive();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Driver</span><span class="hljs-comment">//司机类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> IVehicle _ivehicle;<span class="hljs-comment">//如果这里private ITank :则Fire功能永远用不上，违反接口隔离原则</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Driver</span>(<span class="hljs-params">IVehicle ivehicle</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle = ivehicle;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Drive</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle.Run();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">IVehicle</span><span class="hljs-comment">//车接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is runing"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Truck</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Truck is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">ITank</span><span class="hljs-comment">//坦克接口：胖接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//武器特征</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//机动车辆特征</span>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">LightTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">MediumTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">HeavyTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">} 
+</div></code></pre>
+
+
+
+<h5 id="按照接口分离原则修改后">按照接口分离原则修改后：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cpp"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> myConsole
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> Program
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">       <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-built_in">string</span>[] args)</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Driver driver = <span class="hljs-keyword">new</span> Driver(<span class="hljs-keyword">new</span> LightTank());<span class="hljs-comment">//因为Tank继承至Vehicle，所以都可以开了</span>
+</div><div class="hljs-line">            driver.Drive();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> Driver<span class="hljs-comment">//司机类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> IVehicle _ivehicle;<span class="hljs-comment">//如果这里private ITank :则Fire功能永远用不上，违反接口隔离原则</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Driver</span><span class="hljs-params">(IVehicle ivehicle)</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle = ivehicle;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Drive</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle.Run();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    interface IVehicle<span class="hljs-comment">//车接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span><span class="hljs-params">()</span></span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> Car : IVehicle
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is runing"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> Truck : IVehicle
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Truck is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    interface IWeapon<span class="hljs-comment">//武器接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span><span class="hljs-params">()</span></span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    interface ITank:IWeapon,IVehicle<span class="hljs-comment">//坦克接口继承两个功能的接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> LightTank : ITank
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> MediumTank : ITank
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> HeavyTank : ITank
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span><span class="hljs-params">()</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">} 
+</div></code></pre>
+
+
+
+<h5 id="违反接口隔离原则实例二继承众多小接口形成一个臃肿的大接口来使用">违反接口隔离原则实例二：继承众多小接口形成一个臃肿的大接口来使用</h5>
+
+<blockquote>
+  <p>Array类型和ArrayList类型都实现了ICollection接口和IEnumerable接口</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span>[] array = { <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span> };
+</div><div class="hljs-line">            ArrayList arraylist = <span class="hljs-keyword">new</span> ArrayList() { <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span> };
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Console.WriteLine(Sum(array));
+</div><div class="hljs-line">            Console.WriteLine(Sum(arraylist));
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Sum</span>(<span class="hljs-params">ICollection arr</span>)<span class="hljs-comment">//既能实现ArrayList类型的运算，也能实现Array类型的运算：因为ICollection接口他们都实现了</span></span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">int</span> res = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> n <span class="hljs-keyword">in</span> arr)
+</div><div class="hljs-line">            {
+</div><div class="hljs-line">                res += (<span class="hljs-keyword">int</span>)n;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> res;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h5 id="显式接口实现c特有不想被调用的方法就不会轻易让你看到">显式接口实现（c#特有：不想被调用的方法就不会轻易让你看到）</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs vala"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span></span>
+</div><div class="hljs-line"><span class="hljs-class"></span>{
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> p = <span class="hljs-keyword">new</span> WramKiller();
+</div><div class="hljs-line">            p.Kill();<span class="hljs-comment">//P.这里可以轻易的看到Kill方法和Love方法</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IGentleman</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">void</span> Love();
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IKiller</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">void</span> Kill();
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WramKiller</span> : <span class="hljs-title">IGentleman</span>, <span class="hljs-title">IKiller</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> Kill()
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Let me kill enemy"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> Love()
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"I will love you for ever"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>显式接口实现IKiller接口：</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs vala"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span></span>
+</div><div class="hljs-line"><span class="hljs-class"></span>{
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            IKiller ikill = <span class="hljs-keyword">new</span> WramKiller();
+</div><div class="hljs-line">            ikill.Kill();<span class="hljs-comment">//这里inkill变量是IKill类型的，所以才可以调用</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IGentleman</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">void</span> Love();
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IKiller</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">void</span> Kill();
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WramKiller</span> : <span class="hljs-title">IGentleman</span>, <span class="hljs-title">IKiller</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> Love()
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"I will love you for ever"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-keyword">void</span> IKiller.Kill()<span class="hljs-comment">//显式实现接口：只有变量的类型是IKill的时候才能调用该方法</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Let me kill enemy"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p>反射、特性、依赖注入</p>
+  
+  <blockquote>
+    <p>反射：更松的耦合 <br>
+    .NET framework和.NET core的反射机制，在调用时不一样</p>
+  </blockquote>
+</blockquote>
+
+
+
+<h5 id="反射的基本原理实例实际不会这么直接调用的">反射的基本原理实例：(实际不会这么直接调用的)</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Reflection;<span class="hljs-comment">//MethodInfo的命名空间</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            ITank tank = <span class="hljs-keyword">new</span> HeavyTank();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> t = tank.GetType();
+</div><div class="hljs-line">            <span class="hljs-keyword">object</span> o = Activator.CreateInstance(t);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            MethodInfo fire = t.GetMethod(<span class="hljs-string">"Fire"</span>);
+</div><div class="hljs-line">            MethodInfo run = t.GetMethod(<span class="hljs-string">"Run"</span>);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            fire.Invoke(o, <span class="hljs-literal">null</span>);
+</div><div class="hljs-line">            run.Invoke(o, <span class="hljs-literal">null</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Driver</span><span class="hljs-comment">//司机类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> IVehicle _ivehicle;<span class="hljs-comment">//如果这里private ITank :则Fire功能永远用不上，违反接口隔离原则</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Driver</span>(<span class="hljs-params">IVehicle ivehicle</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle = ivehicle;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Drive</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle.Run();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">IVehicle</span><span class="hljs-comment">//车接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is runing"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Truck</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Truck is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">ITank</span><span class="hljs-comment">//坦克接口：胖接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//武器特征</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//机动车辆特征</span>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">LightTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">MediumTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">HeavyTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>封装好了的反射其中最重要一个功能：依赖注入 <br>
+  <span style="background:pink">依赖反转是一个概念。依赖注入是在这个概念之上，结合接口、反射机制，形成的一个应用。</span> <br>
+  依赖注入需要借助依赖注入框架：依赖项添加：DependencyInjection <br>
+  代码中要引入名称空间：using Microsoft.Extensions.DependencyInjection;</p>
+</blockquote>
+
+
+
+<h5 id="依赖注入的最基本用法">依赖注入的最基本用法：</h5>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> Microsoft.Extensions.DependencyInjection;<span class="hljs-comment">//引入依赖注入框架名称空间</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> sc = <span class="hljs-keyword">new</span> ServiceCollection();
+</div><div class="hljs-line">            <span class="hljs-comment">//sc.AddScoped(typeof(ITank), typeof(HeavyTank));//不同车型只需要改这里一处就可以了</span>
+</div><div class="hljs-line">            sc.AddScoped(<span class="hljs-keyword">typeof</span>(ITank), <span class="hljs-keyword">typeof</span>(MediumTank));
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> sp = sc.BuildServiceProvider();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            ITank itank = sp.GetService&lt;ITank&gt;();
+</div><div class="hljs-line">            itank.Fire();
+</div><div class="hljs-line">            itank.Run();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Driver</span><span class="hljs-comment">//司机类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> IVehicle _ivehicle;<span class="hljs-comment">//如果这里private ITank :则Fire功能永远用不上，违反接口隔离原则</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Driver</span>(<span class="hljs-params">IVehicle ivehicle</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle = ivehicle;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Drive</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle.Run();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">IVehicle</span><span class="hljs-comment">//车接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is runing"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Truck</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Truck is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">ITank</span><span class="hljs-comment">//坦克接口：胖接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//武器特征</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//机动车辆特征</span>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">LightTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">MediumTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">HeavyTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> System;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> System.Collections;
+</div><div class="hljs-line"><span class="hljs-keyword">using</span> Microsoft.Extensions.DependencyInjection;<span class="hljs-comment">//引入依赖注入框架名称空间</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">myConsole</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> sc = <span class="hljs-keyword">new</span> ServiceCollection();
+</div><div class="hljs-line">            <span class="hljs-comment">//sc.AddScoped(typeof(ITank), typeof(HeavyTank));//不同车型只需要改这里一处就可以了</span>
+</div><div class="hljs-line">            sc.AddScoped(<span class="hljs-keyword">typeof</span>(ITank), <span class="hljs-keyword">typeof</span>(MediumTank));
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            sc.AddScoped(<span class="hljs-keyword">typeof</span>(IVehicle), <span class="hljs-keyword">typeof</span>(Car));
+</div><div class="hljs-line">            sc.AddScoped&lt;Driver&gt;();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">var</span> sp = sc.BuildServiceProvider();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            Driver d = sp.GetService&lt;Driver&gt;();
+</div><div class="hljs-line">            d.Drive();<span class="hljs-comment">//Car is runing</span>
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Driver</span><span class="hljs-comment">//司机类</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">private</span> IVehicle _ivehicle;<span class="hljs-comment">//如果这里private ITank :则Fire功能永远用不上，违反接口隔离原则</span>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Driver</span>(<span class="hljs-params">IVehicle ivehicle</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle = ivehicle;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Drive</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            _ivehicle.Run();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">IVehicle</span><span class="hljs-comment">//车接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Car is runing"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">Truck</span> : <span class="hljs-title">IVehicle</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"Truck is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">interface</span> <span class="hljs-title">ITank</span>:<span class="hljs-title">IVehicle</span><span class="hljs-comment">//坦克接口：胖接口</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>;<span class="hljs-comment">//武器特征</span>
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">LightTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"LightTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">MediumTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"MediumTank is Running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">class</span> <span class="hljs-title">HeavyTank</span> : <span class="hljs-title">ITank</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Fire</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is Fire"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)</span>
+</div><div class="hljs-line"><span class="hljs-function">        </span>{
+</div><div class="hljs-line">            Console.WriteLine(<span class="hljs-string">"HeavyTank is running"</span>);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>插件式编程</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs"><div class="hljs-line"><wbr>
+</div></code></pre>
+
+<hr>
+
+<blockquote>
+  <p><a href="https://www.ecma-international.org/publications/standards/Ecma-334.htm" target="_blank">c#标准文档</a>（搜索：ecma c#） <br>
+  网址：<a href="https://www.edx.org/" target="_blank">https://www.edx.org/</a> <br>
+  搜索：timothy liu <br>
+  即下方课程： <br>
+  <a href="https://www.edx.org/course/server-side-application-asp-net" target="_blank">asp.net core课程</a></p>
+</blockquote>
+
+<p><a href="#top">Top</a></p></div></body></html>
