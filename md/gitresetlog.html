@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><title>git 远程分支退回到历史版本</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<h2 id="git-远程分支退回到历史版本">git 远程分支退回到历史版本</h2>
+
+<pre class="prettyprint hljs-dark"><code class="hljs gauss"><div class="hljs-line"><span class="hljs-comment">// 1. 切换到要操作的分支</span>
+</div><div class="hljs-line">git checkout branch_name
+</div><div class="hljs-line"><span class="hljs-comment">// 2. 查看历史记录</span>
+</div><div class="hljs-line">git <span class="hljs-built_in">log</span>
+</div><div class="hljs-line"><span class="hljs-comment">// 3. 退回指定版本：后面这个Id最少6位，便于区分</span>
+</div><div class="hljs-line">git reset --hard dbdfe35af6
+</div><div class="hljs-line"><span class="hljs-comment">// 4. 强制推送</span>
+</div><div class="hljs-line">git <span class="hljs-keyword">push</span> -f origin branch_name
+</div></code></pre>
+
+<h3 id="就是这么简单之前都到第三步了就是无法回滚因为不明白其中的道理">就是这么简单，之前都到第三步了，就是无法回滚，因为不明白其中的道理！</h3>
+
+<h3 id="原理剖析在执行完第三步后本地的代码已经回滚到指定的历史版本而远程分支的版本还是之前的现在push肯定报错因为当前版本低于远程版本无法推送那只有强制推送达到覆盖的目的问题就解决了">原理剖析：<b style="color:red">在执行完第三步后，本地的代码已经回滚到指定的历史版本，而远程分支的版本还是之前的，现在push肯定报错！因为当前版本低于远程版本，无法推送。那只有强制推送，达到覆盖的目的，问题就解决了！</b></h3>
+
+<ul><li><p>第三步执行完是对本地代码的回滚，不是远程代码！</p></li>
+<li><p>可以不用执行<code>git log</code> 直接去代码托管网站查看历史推送记录，一般都会有相应的<code>commit-short-id</code></p></li>
+</ul></div></body></html>
