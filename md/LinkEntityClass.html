@@ -1,0 +1,203 @@
+<!DOCTYPE html><html><head><title>一个实体类中的字段是另一个实体类时</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<h1 id="一个实体类中的字段是另一个实体类时">一个实体类中的字段是另一个实体类时</h1>
+
+
+
+<h3 id="问题困扰">问题困扰：</h3>
+
+<blockquote>
+  <p>实体类间总要有联系的，但是我一直在避开他们有关系的部分，因为我不知道如何解决这种牵连关系。现在躲不掉了，必须要区解决它！</p>
+</blockquote>
+
+
+
+<h3 id="之前做法">之前做法：</h3>
+
+<ul><li><p>一个员工表，离职表，离职表中要对应一个员工，员工表也要有能获取到离职信息列表的方法。</p></li>
+<li><p>之前的方法一直都是，员工表中写一个获取离职信息列表（考虑到一个员工多次入离职）的方法，离职表中写一个<strong>QuitInfoCode</strong>离职信息编号（guid），然后此字段对应员工表的Id，员工页面获取它的离职信息时，通过Employee.Id==QuitInfoCode来获取。</p></li>
+<li><p>但是如果我新增离职信息，如何填写这个QuitInfoCode呢，这是个最大的问题，而且这个字段也很牵强的存在。</p></li>
+</ul>
+
+<hr>
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><a href="#一个实体类中的字段是另一个实体类时">一个实体类中的字段是另一个实体类时</a><ul>
+<li><ul>
+<li><a href="#问题困扰">问题困扰：</a></li>
+<li><a href="#之前做法">之前做法：</a></li>
+</ul>
+</li>
+<li><a href="#1-员工字段接口">1. 员工字段接口</a></li>
+<li><a href="#2-各个实体类添加字段实现接口">2. 各个实体类添加字段（实现接口）</a></li>
+<li><a href="#3-员工表中获取相关信息合同离职等">3. 员工表中获取相关信息（合同、离职等）</a></li>
+<li><a href="#4-api中方法">4. api中方法：</a></li>
+<li><a href="#5-补前台ajax请求及传递id">5. 补：前台ajax请求，及传递Id</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<p><strong>解题思路</strong>：员工表获取离职信息方法不动，离职表中QuitInfoCode去除，添加<code>public Employee Employee { get; set; }</code>方法，然后页面要获取离职信息，直接调用那个方法即可</p>
+
+<ul><li><p>Employee字段存储的是员工表中的Id（string Guid），用页面传入的员工Id和离职表中Employee字段做比较，拿出相同的即可。</p></li>
+<li><p>问题是：离职表中该字段是Employee类型的，存储的是string id，我方法里如何使用它做比较，困扰了一天！！！！</p></li>
+</ul>
+
+<hr>
+
+
+
+<h2 id="1-员工字段接口">1. 员工字段接口</h2>
+
+<ul><li><p>很多表都和员工表对应，都需要员工表的员工字段，那就拿出来，其他表继承</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-keyword">using</span> Sail.Common;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Qvolax.Models</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line">    <span class="hljs-comment"><span class="hljs-doctag">///</span> 员工信息</span>
+</div><div class="hljs-line">    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IEmployeeInfo</span> : <span class="hljs-title">IModel</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line">        <span class="hljs-comment"><span class="hljs-doctag">///</span> 员工</span>
+</div><div class="hljs-line">        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">        Employee Employee { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<ul><li><p>它必须是一个接口，因为各个实体类都继承了ModelBase抽象类（用于生成主键）、IModel空接口……等</p></li>
+<li><p>如果这里写成类，就会与ModelBase冲突（违反单一继承原则）</p></li>
+<li><p>还有这里继承了IModel，但是不会生成数据库表，因为它是接口!</p></li>
+<li><p>同样，继承此接口的实体类就没必要再继承IModel了。。。。</p></li>
+</ul>
+
+
+
+<h2 id="2-各个实体类添加字段实现接口">2. 各个实体类添加字段（实现接口）</h2>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 员工</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">[HColumn]
+</div><div class="hljs-line">[Form(IsRequired =<span class="hljs-literal">true</span>)]
+</div><div class="hljs-line">[ModelData(<span class="hljs-string">"prop"</span>,<span class="hljs-string">"Id"</span>)]
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> Employee Employee { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div></code></pre>
+
+
+
+<h2 id="3-员工表中获取相关信息合同离职等">3. 员工表中获取相关信息（合同、离职等）</h2>
+
+<ul><li><p>写成泛型，这样就只需要写一个即可</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取员工关联信息</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="db"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="employeeId"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IList&lt;T&gt; GetEmployeeInfo&lt;T&gt;(IDataContext db, <span class="hljs-keyword">string</span> employeeId) <span class="hljs-keyword">where</span> T : IEmployeeInfo
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-comment">//这里会报错：无效的Employee</span>
+</div><div class="hljs-line">    <span class="hljs-comment">//return db.GetList&lt;T&gt;(s =&gt; s.Employee.Id == employeeId);</span>
+</div><div class="hljs-line">    <span class="hljs-comment">// 因为表中Employee是Employee类型，但是存入的是string Guid格式的员工id，这里这样用，把该字段当成了员工对象来用，但是并不存在啊</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-comment">//下面就创建这个对象字段！两种写法，感觉这样写更严谨吧</span>
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> db.GetList&lt;T&gt;(<span class="hljs-keyword">new</span> Field(<span class="hljs-keyword">nameof</span>(IEmployeeInfo.Employee)) == employeeId);
+</div><div class="hljs-line">    <span class="hljs-comment">//return db.GetList&lt;T&gt;(new Field("Employee") == employeeId);</span>
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<ul><li><p>再写一个获取方法：使用对象来调用，这样根据需求来调用即可</p></li>
+<li><p>这个方法是通过调用上面这个方法来实现的，可以说是它的封装把</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取相关信息</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;typeparam name="T"&gt;</span><span class="hljs-doctag">&lt;/typeparam&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="db"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> IList&lt;T&gt; GetRelationInfo&lt;T&gt;(IDataContext db) <span class="hljs-keyword">where</span> T : IEmployeeInfo
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> GetEmployeeInfo&lt;T&gt;(db, <span class="hljs-keyword">this</span>.Id);
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<ul><li><p>它不需要传id，只需要对象即可（对象中已经有id了）</p></li>
+</ul>
+
+<blockquote>
+  <p><strong>总结</strong>：无论是哪一种方法，要获取离职信息还是合同信息，都要先获取到对应的人（可以是人这个对象，也可以是人的ID），只要能找到依据，即可实现！！！</p>
+</blockquote>
+
+
+
+<h2 id="4-api中方法">4. api中方法：</h2>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取离职信息</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="employeeId"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line">[HttpGet]
+</div><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">public</span> AjaxResult <span class="hljs-title">GetQuitInfo</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> employeeId</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function"></span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> HandleHelper.TryAction(db =&gt;
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-comment">// 获取员工对象</span>
+</div><div class="hljs-line">        <span class="hljs-keyword">var</span> employee = GetModel(db, employeeId);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-comment">//使用泛型类+前台传入的id获取</span>
+</div><div class="hljs-line">            <span class="hljs-comment">//Details = Employee.GetEmployeeInfo&lt;QuitInfo&gt;(db, employeeId)</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">// 使用对象获取</span>
+</div><div class="hljs-line">            Details = employee.GetRelationInfo&lt;QuitInfo&gt;(db)
+</div><div class="hljs-line">        };
+</div><div class="hljs-line">    });
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<ul><li><p>两种获取方式，都需要前台传入employeeId</p></li>
+</ul>
+
+
+
+<h2 id="5-补前台ajax请求及传递id">5. 补：前台ajax请求，及传递Id</h2>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs haskell"><div class="hljs-line">$.get(<span class="hljs-string">"/api/Employee/GetQuitInfo"</span>,
+</div><div class="hljs-line">     {
+</div><div class="hljs-line">         employeeId: <span class="hljs-class"><span class="hljs-keyword">data</span>.<span class="hljs-type">Id</span></span>
+</div><div class="hljs-line">     },
+</div></code></pre>
+
+<ul><li><p><strong>注意</strong>：这里的参数名employeeId要和api方法中的参数名保持一致！</p></li>
+<li><p>本质写法：<code>$.get("/api/Employee/GetQuitInfo?employeeId="+data.Id,</code></p></li>
+</ul></div></body></html>
