@@ -2,11 +2,9 @@
                         
                     
 
-
+<div id="top"></div>
 
 <h1 id="一个实体类中的字段是另一个实体类时">一个实体类中的字段是另一个实体类时</h1>
-
-
 
 <h3 id="问题困扰">问题困扰：</h3>
 
@@ -16,7 +14,7 @@
 
 
 
-<h3 id="之前做法">之前做法：</h3>
+<h3 id="之前做法">之前做法</h3>
 
 <ul><li><p>一个员工表，离职表，离职表中要对应一个员工，员工表也要有能获取到离职信息列表的方法。</p></li>
 <li><p>之前的方法一直都是，员工表中写一个获取离职信息列表（考虑到一个员工多次入离职）的方法，离职表中写一个<strong>QuitInfoCode</strong>离职信息编号（guid），然后此字段对应员工表的Id，员工页面获取它的离职信息时，通过Employee.Id==QuitInfoCode来获取。</p></li>
@@ -30,7 +28,7 @@
 <li><a href="#一个实体类中的字段是另一个实体类时">一个实体类中的字段是另一个实体类时</a><ul>
 <li><ul>
 <li><a href="#问题困扰">问题困扰：</a></li>
-<li><a href="#之前做法">之前做法：</a></li>
+<li><a href="#之前做法">之前做法</a></li>
 </ul>
 </li>
 <li><a href="#1-员工字段接口">1. 员工字段接口</a></li>
@@ -38,6 +36,11 @@
 <li><a href="#3-员工表中获取相关信息合同离职等">3. 员工表中获取相关信息（合同、离职等）</a></li>
 <li><a href="#4-api中方法">4. api中方法：</a></li>
 <li><a href="#5-补前台ajax请求及传递id">5. 补：前台ajax请求，及传递Id</a></li>
+<li><a href="#根据业务需求添加排序规则">根据业务需求添加排序规则</a><ul>
+<li><a href="#修改employee表中获取关联信息方法">修改Employee表中获取关联信息方法</a></li>
+<li><a href="#api中相应的方法">api中相应的方法</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -52,8 +55,6 @@
 </ul>
 
 <hr>
-
-
 
 <h2 id="1-员工字段接口">1. 员工字段接口</h2>
 
@@ -200,4 +201,106 @@
 
 <ul><li><p><strong>注意</strong>：这里的参数名employeeId要和api方法中的参数名保持一致！</p></li>
 <li><p>本质写法：<code>$.get("/api/Employee/GetQuitInfo?employeeId="+data.Id,</code></p></li>
-</ul></div></body></html>
+</ul>
+
+<hr color="red">
+
+<hr color="red">
+
+<h2 id="根据业务需求添加排序规则">根据业务需求添加排序规则</h2>
+
+<ul><li><p>员工列表页面，点击员工姓名后，展示详情，里面包含了合同列表和离职信息列表，现需要对这两个列表信息进行排序</p></li>
+<li><p>排序规则：按照创建合同/离职信息时间来排序ModelBase中CreateTime字段</p></li>
+</ul>
+
+
+
+<h3 id="修改employee表中获取关联信息方法">修改Employee表中获取关联信息方法</h3>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取相关信息</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;typeparam name="T"&gt;</span><span class="hljs-doctag">&lt;/typeparam&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="db"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="orderby"&gt;</span>排序规则（sql）<span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> IList&lt;T&gt; GetRelationInfo&lt;T&gt;(IDataContext db, Clip <span class="hljs-keyword">orderby</span>) <span class="hljs-keyword">where</span> T : IEmployeeInfo
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> GetEmployeeInfo&lt;T&gt;(db, <span class="hljs-keyword">this</span>.Id, <span class="hljs-keyword">orderby</span>);
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取员工关联信息</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="db"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="employeeId"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="orderby"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IList&lt;T&gt; GetEmployeeInfo&lt;T&gt;(IDataContext db, <span class="hljs-keyword">string</span> employeeId, Clip <span class="hljs-keyword">orderby</span>) <span class="hljs-keyword">where</span> T : IEmployeeInfo
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-comment">//return db.GetList&lt;T&gt;(s =&gt; s.Employee.Id == employeeId);</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-comment">// 添加了排序规则参数</span>
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> db.GetList&lt;T&gt;(<span class="hljs-keyword">new</span> Field(<span class="hljs-keyword">nameof</span>(IEmployeeInfo.Employee)) == employeeId, <span class="hljs-keyword">orderby</span>);
+</div><div class="hljs-line">    <span class="hljs-comment">//return db.GetList&lt;T&gt;(new Field("Employee") == employeeId);</span>
+</div><div class="hljs-line">}
+</div></code></pre>
+
+
+
+<h3 id="api中相应的方法">api中相应的方法</h3>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取离职信息</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="employeeId"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line">[HttpGet]
+</div><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">public</span> AjaxResult <span class="hljs-title">GetQuitInfo</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> employeeId</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function"></span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> HandleHelper.TryAction(db =&gt;
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-comment">//方法一： 获取员工对象</span>
+</div><div class="hljs-line">        <span class="hljs-keyword">var</span> employee = GetModel(db, employeeId);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-comment">// 使用对象获取</span>
+</div><div class="hljs-line">            Details = employee.GetRelationInfo&lt;QuitInfo&gt;(db, Clip.OrderBy&lt;QuitInfo&gt;(x =&gt; x.CreateTime.Desc()))
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">//方法二：使用泛型类+前台传入的id获取</span>
+</div><div class="hljs-line">            <span class="hljs-comment">//Details = Employee.GetEmployeeInfo&lt;QuitInfo&gt;(db, employeeId)</span>
+</div><div class="hljs-line">        };
+</div><div class="hljs-line">    });
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取员工劳动合同</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="employeeId"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line">[HttpGet]
+</div><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">public</span> AjaxResult <span class="hljs-title">GetEmployeeContract</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> employeeId</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function"></span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> HandleHelper.TryAction(db =&gt;
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Details = Employee.GetEmployeeInfo&lt;EmployeeContract&gt;(db, employeeId, Clip.OrderBy&lt;QuitInfo&gt;(x =&gt; x.CreateTime.Asc()))
+</div><div class="hljs-line">        };
+</div><div class="hljs-line">    });
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<hr color="blue">
+
+<blockquote>
+  <p><strong>待解决：</strong>获取离职信息和合同信息，无论是前端ajax请求数据，还是后端api方法的获取，都是两个差不多的代码片段，可以考虑都合并成一个方法……</p>
+</blockquote>
+
+<p><a href="#top">↑返回顶部↑</a></p></div></body></html>
