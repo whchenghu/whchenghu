@@ -1,0 +1,110 @@
+<!DOCTYPE html><html><head><title>待优化代码片段</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<h1 id="待优化代码片段">待优化代码片段</h1>
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><a href="#待优化代码片段">待优化代码片段</a><ul>
+<li><ul>
+<li><a href="#ajax请求部分">ajax请求部分</a></li>
+<li><a href="#后台api方法">后台api方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<h3 id="ajax请求部分">ajax请求部分</h3>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs javascript"><div class="hljs-line"><span class="hljs-comment">// 离职信息</span>
+</div><div class="hljs-line">.on(<span class="hljs-string">"after.View"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">sender, data</span>) </span>{
+</div><div class="hljs-line">    $.get(<span class="hljs-string">"/api/Employee/GetRelationInfo"</span>,
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-attr">employeeId</span>: data.Id,
+</div><div class="hljs-line">        <span class="hljs-comment">//EntityName: "QuitInfo"</span>
+</div><div class="hljs-line">    },
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (result.IsSuccess) {
+</div><div class="hljs-line">                $(<span class="hljs-string">"#quitinfo"</span>).Link(<span class="hljs-string">"#quitinfoTmpl"</span>, result.Data.Details);
+</div><div class="hljs-line">                $(<span class="hljs-string">"#quitinfoNum"</span>).text(result.Data.Details.length);
+</div><div class="hljs-line">            } <span class="hljs-keyword">else</span> {
+</div><div class="hljs-line">                ShowError(result.Msg);
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        });
+</div><div class="hljs-line">})
+</div><div class="hljs-line"><span class="hljs-comment">// 员工合同</span>
+</div><div class="hljs-line">.on(<span class="hljs-string">"after.View"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">sender, data</span>) </span>{
+</div><div class="hljs-line">    $.get(<span class="hljs-string">"/api/Employee/GetEmployeeContract"</span>,
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-attr">employeeId</span>: data.Id,
+</div><div class="hljs-line">            <span class="hljs-comment">//EntityName:"EmployeeContract"</span>
+</div><div class="hljs-line">        },
+</div><div class="hljs-line">        <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">result</span>) </span>{
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (result.IsSuccess) {
+</div><div class="hljs-line">                $(<span class="hljs-string">"#EmployeeContract"</span>).Link(<span class="hljs-string">"#EmployeeContractTmpl"</span>, result.Data.Details);
+</div><div class="hljs-line">                $(<span class="hljs-string">"#EmployeeContractNum"</span>).text(result.Data.Details.length);
+</div><div class="hljs-line">            } <span class="hljs-keyword">else</span> {
+</div><div class="hljs-line">                ShowError(result.Msg);
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        });
+</div><div class="hljs-line">})
+</div></code></pre>
+
+<h3 id="后台api方法">后台api方法</h3>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取离职信息</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="employeeId"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line">[HttpGet]
+</div><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">public</span> AjaxResult <span class="hljs-title">GetQuitInfo</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> employeeId</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function"></span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> HandleHelper.TryAction(db =&gt;
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-comment">// 获取员工对象</span>
+</div><div class="hljs-line">        <span class="hljs-keyword">var</span> employee = GetModel(db, employeeId);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-comment">//使用泛型类+前台传入的id获取</span>
+</div><div class="hljs-line">            <span class="hljs-comment">//Details = Employee.GetEmployeeInfo&lt;QuitInfo&gt;(db, employeeId)</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">// 使用对象获取</span>
+</div><div class="hljs-line">            Details = employee.GetRelationInfo&lt;QuitInfo&gt;(db)
+</div><div class="hljs-line">        };
+</div><div class="hljs-line">    });
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取员工劳动合同</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="employeeId"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line">[HttpGet]
+</div><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">public</span> AjaxResult <span class="hljs-title">GetEmployeeContract</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> employeeId</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function"></span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> HandleHelper.TryAction(db =&gt;
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            Details = Employee.GetEmployeeInfo&lt;EmployeeContract&gt;(db, employeeId)
+</div><div class="hljs-line">        };
+</div><div class="hljs-line">    });
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>感觉两个都能简化成一个，后面琢磨琢磨吧</p>
+</blockquote></div></body></html>
