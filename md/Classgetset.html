@@ -1,0 +1,241 @@
+<!DOCTYPE html><html><head><title>记一次需求导致的问题</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><ul>
+<li><a href="#记一次需求导致的问题">记一次需求导致的问题</a><ul>
+<li><ul>
+<li><ul>
+<li><a href="#需求用通过计算的字段作为查询条件">需求：用通过计算的字段作为查询条件</a></li>
+</ul>
+</li>
+<li><a href="#一次错误的处理">一次错误的处理：</a></li>
+<li><a href="#寻求帮助">寻求帮助：</a></li>
+<li><a href="#如何写set">如何写set</a><ul>
+<li><a href="#写set访问器">写set访问器：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#再添加功能选择年份月份作为搜索条件">再添加功能：选择年份&amp;&amp;月份作为搜索条件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+<h2 id="记一次需求导致的问题">记一次需求导致的问题</h2>
+
+
+
+<h5 id="需求用通过计算的字段作为查询条件">需求：用通过计算的字段作为查询条件</h5>
+
+<blockquote>
+  <p><strong>问题概述：</strong>在实体类中我有一个售出日期字段、售出月份字段，后面又添加了一个售出年份字段，只有售出日期是从表单中获取值，另外的直接从售出日期中获取。代码如下：</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 售出日期</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">[HColumn]
+</div><div class="hljs-line">[Form(IsRequired = <span class="hljs-literal">true</span>)]
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> DateTime SaleDate { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 售出月份</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">[HColumn]<span class="hljs-comment">//生成表中字段</span>
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Month =&gt; SaleDate.Month.ToString();
+</div></code></pre>
+
+<blockquote>
+  <p>上面写法：可以插入数据，但是查询不行，报下面错误！ <br>
+  这样写是模仿合同开始时间、合同年限 ====&gt; 合同到期时间=开始时间+年限 <br>
+  但是他们有本质上的区别：</p>
+  
+  <ol><li rel="1"><p>合同到期时间不用放到数据库表中（字段上不加<strong>[HColumn]</strong>即不会生成表中字段），而这里的售出月份是需要的，因为我要使用他来作为搜索条件，否则查询时会报错：<code>转换DataRow到实体出错，错误字段：[Month]!</code>,即表中无此字段，更不要说作为表搜素查询的依赖条件了….</p></li>
+  <li rel="2"><p>合同到期时间字段的类型依然时DateTime，没有涉及到类型转换，而我那里涉及到了 DateTime —&gt; string ，这也是最初认为的错误原因所在（后来证实是错误的）！</p></li>
+  </ol>
+  
+  </blockquote>
+
+
+<h4 id="一次错误的处理">一次错误的处理：</h4>
+
+<blockquote>
+  <p>Month字段不放到表中！这样可插入，可查询，但是不能用Month作为条件来查询！报错：<code>Invalid column name 'Month'</code>，那也就实现不了我的需求！</p>
+</blockquote>
+
+
+
+<h4 id="寻求帮助">寻求帮助：</h4>
+
+<ul><li><p>用的什么ORM</p></li>
+<li><p>调试时可以用<a href="https://www.cnblogs.com/ZaraNet/p/10190444.html" target="_blank">SQL Server的sql追踪器</a>监控执行过程中sql语句，从而找到问题所在</p></li>
+<li><p>表中字段这样赋值，get set数据库映射有问题</p></li>
+<li><p>可以在api的InsertAction中给Month赋值，不用把逻辑写到实体类中（我想的是：在页面中监视SaleDate表单框，然后赋值给Month）</p></li>
+<li><p>内部封装的框架应该会有一个展示执行sql的方法，调出来看看</p></li>
+<li><p>这样写法，字段Month只有get访问器，没有set访问器，即此字段变成了只读属性！&lt;—-面向对象三大特性之一：封装</p></li>
+</ul>
+
+
+
+<h4 id="如何写set">如何写set</h4>
+
+<p><strong>基础回顾：</strong></p>
+
+<ul><li><p>类中成员包括字段、属性、方法</p></li>
+<li><p>字段：类中的变量，可以有private/protected/public等不同修饰符。<code>存储数据的变量</code></p></li>
+<li><p>属性：使用get/set包装的方法，本质是方法，是方法的简写。作用就是增强对字段的存取控制！``````</p></li>
+<li><p><code>如果类中一个字段是private，那外部是不能访问的，但是可以通过属性的get访问器来读取他的值，也可以通过set访问器来更新（写）他的值</code></p></li>
+<li><p>属性的get/set可以限制字段的一些功能，以达到某种目的！</p></li>
+<li><p><code>属性是没有存储功能的（本质是函数/方法），数据都存储在字段中，所以只有修改了字段的数据才能修改数据，改属性值没用！</code></p></li>
+<li><p><code>属性其实就是对字段的封装，字段在类内部使用，属性安全性高一点，所以可以在外部使用！</code></p></li>
+<li><p>属性和方法的区别：属性没有参数列表，方法必须有，哪怕是空的，也要写个空括号在那里！属性至少要有get/set其中一个访问器（不可读不可写的属性是没有意义的！）。<code>两者都可以判定字段中数据的合法性！即都可以对字段的值起限定作用！</code></p></li>
+</ul>
+
+<hr>
+
+
+
+<h5 id="写set访问器">写set访问器：</h5>
+
+<ul><li><p>我的写法：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 售出日期</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">[HColumn]
+</div><div class="hljs-line">[Form(IsRequired = <span class="hljs-literal">true</span>)]
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> SaleDate{ <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 售出月份</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">[HColumn]
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Month
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">get</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> SaleDate.Month.ToString();
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">set</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        Month = <span class="hljs-keyword">value</span>;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<blockquote>
+  <p>set访问器是个死回调函数，造成查询时死回调，导致程序闪退！</p>
+</blockquote>
+
+<ul><li><p>正确写法：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 售出日期字段</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-keyword">private</span> DateTime saleDate;<span class="hljs-comment">//字段</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 售出日期</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">[HColumn]
+</div><div class="hljs-line">[Form(IsRequired = <span class="hljs-literal">true</span>)]
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> DateTime SaleDate<span class="hljs-comment">//属性</span>
+</div><div class="hljs-line">{
+</div><div class="hljs-line">    <span class="hljs-keyword">get</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> saleDate;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">set</span>
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        saleDate = <span class="hljs-keyword">value</span>;<span class="hljs-comment">//将值赋值给字段</span>
+</div><div class="hljs-line">        Month = saleDate.Month.ToString();
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 售出日期</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line">[HColumn]
+</div><div class="hljs-line"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Month { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div></code></pre>
+
+<blockquote>
+  <p>在值的来源处（SaleDate字段）的set访问器上给Month赋值！ <br>
+  问题解决！</p>
+</blockquote>
+
+
+
+<h3 id="再添加功能选择年份月份作为搜索条件">再添加功能：选择年份&amp;&amp;月份作为搜索条件</h3>
+
+<ul><li><p>问题：如果直接搜索月份，可能2018年7月和2019年7月的数据都会出来，这样就达不到目的了</p></li>
+</ul>
+
+<blockquote>
+  <p>那就再添加一个Year字段，再SaleDate属性的set访问器中进行赋值即可</p>
+  
+  <ul><li><p>页面：在<code>&lt;toolbar&gt;</code>标签中添加年份和月份的表单框，分别写上name属性，框架会自动生成相应的ajax请求，请求的url自动包含name属性中的参数</p></li>
+  </ul>
+  
+  </blockquote>
+
+<pre class="prettyprint hljs-dark"><code class="hljs stylus"><div class="hljs-line">&lt;toolbar key=<span class="hljs-string">"请输入姓名/车辆型号"</span>&gt;
+</div><div class="hljs-line">    &lt;<span class="hljs-selector-tag">input</span> <span class="hljs-attribute">filter</span> type=<span class="hljs-string">"text"</span> name=<span class="hljs-string">"year"</span> value=<span class="hljs-string">""</span> placeholder=<span class="hljs-string">"售出年份"</span> /&gt;
+</div><div class="hljs-line">    &lt;<span class="hljs-selector-tag">input</span> <span class="hljs-attribute">filter</span> type=<span class="hljs-string">"text"</span> name=<span class="hljs-string">"month"</span> value=<span class="hljs-string">""</span> placeholder=<span class="hljs-string">"售出月份"</span> /&gt;
+</div><div class="hljs-line">&lt;/toolbar&gt;
+</div></code></pre>
+
+<ul><li><p>API方法：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs cs"><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> 获取客户列表</span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="pageIndex"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="pageSize"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="key"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="year"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name="month"&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span>
+</div><div class="hljs-line"><span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;returns&gt;</span><span class="hljs-doctag">&lt;/returns&gt;</span></span>
+</div><div class="hljs-line">[HttpGet]
+</div><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">public</span> AjaxResult <span class="hljs-title">GetList</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> pageIndex, <span class="hljs-keyword">int</span> pageSize, <span class="hljs-keyword">string</span> key, <span class="hljs-keyword">string</span> year, <span class="hljs-keyword">string</span> month</span>)</span>
+</div><div class="hljs-line"><span class="hljs-function"></span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> HandleHelper.TryAction(db =&gt;
+</div><div class="hljs-line">    {
+</div><div class="hljs-line">        <span class="hljs-keyword">var</span> <span class="hljs-keyword">where</span> = MakeWhere(key);
+</div><div class="hljs-line">        <span class="hljs-keyword">if</span> (year.IsNotNull() &amp;&amp; month.IsNotNull())<span class="hljs-comment">//必须放在第一个</span>
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">where</span> &amp;= Where(x =&gt; x.Year == year &amp;&amp; x.Month == month);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-keyword">if</span> (year.IsNotNull())
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">where</span> &amp;= Where(x =&gt; x.Year == year);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-keyword">if</span> (month.IsNotNull())
+</div><div class="hljs-line">        {
+</div><div class="hljs-line">            <span class="hljs-keyword">where</span> &amp;= Where(x =&gt; x.Month == month);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.GetPageList(db, pageIndex, pageSize, <span class="hljs-keyword">where</span>, OrderBy);
+</div><div class="hljs-line">    });
+</div><div class="hljs-line">}
+</div></code></pre></div></body></html>
