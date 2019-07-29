@@ -1,0 +1,106 @@
+<!DOCTYPE html><html><head><title>.NET Core项目部署到win10系统的IIS服务器上踩坑概述</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<h1 id="net-core项目部署到win10系统的iis服务器上踩坑概述">.NET Core项目部署到win10系统的IIS服务器上踩坑概述</h1>
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><a href="#net-core项目部署到win10系统的iis服务器上踩坑概述">.NET Core项目部署到win10系统的IIS服务器上踩坑概述</a><ul>
+<li><a href="#部署成功前问题">部署成功前问题：</a><ul>
+<li><a href="#visual-studio-2019上发布以后直接部署时报50019等500错误">visual studio 2019上发布以后，直接部署时报500.19等500错误</a></li>
+<li><a href="#使用localdb数据库需要用户权限">使用localDB数据库需要用户权限</a></li>
+<li><a href="#使用sqlserver2014的数据库部署">使用sqlserver2014的数据库部署</a></li>
+<li><a href="#对webconfig配置文件无权限问题">对Web.config配置文件无权限问题</a></li>
+</ul>
+</li>
+<li><a href="#部署成功后问题">部署成功后问题：</a><ul>
+<li><a href="#xml文件无法读取导致页面字段英文">.xml文件无法读取，导致页面字段英文</a></li>
+<li><a href="#绑定本地域名和ip">绑定本地域名和IP</a></li>
+<li><a href="#至此浏览器输入httpxxxcom3060即可访问网站了">至此，浏览器输入：http://xxx.com:3060即可访问网站了</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+<h2 id="部署成功前问题">部署成功前问题：</h2>
+
+
+
+<h3 id="visual-studio-2019上发布以后直接部署时报50019等500错误">visual studio 2019上发布以后，直接部署时报500.19等500错误</h3>
+
+<ul><li><p>系统缺乏两个依赖项（IIS托管软件…）导致的：<a href="https://dotnet.microsoft.com/download" target="_blank"><code>dotnet.sdk和dotnet.hosting</code></a></p></li>
+<li><p>安装完成后，IIS部署页面双击<code>模块</code>可以看到AspNetCoreModule(有两个)</p></li>
+</ul>
+
+
+
+<h3 id="使用localdb数据库需要用户权限">使用localDB数据库需要用户权限</h3>
+
+<ul><li><p>因为之前有过踩坑经历，确实是条死路，后知原因：localDB需要IIS有权限才能访问，而IIS也需要localDB有权限才能部署</p></li>
+<li><p>不如直接用sqlserver，还方便管理！</p></li>
+</ul>
+
+
+
+<h3 id="使用sqlserver2014的数据库部署">使用sqlserver2014的数据库部署</h3>
+
+<ul><li><p>设置数据库用户和密码</p></li>
+<li><p>数据库连接字符串：<code>&lt;add name="conn" connectionString="Data Source=11.1.11.111;Database=aycore;uid=sa;pwd=mima" providerName="System.Data.SqlClient" /&gt;</code></p></li>
+</ul>
+
+
+
+<h3 id="对webconfig配置文件无权限问题">对Web.config配置文件无权限问题</h3>
+
+<ul><li><p>项目文件没有读取权限，右键项目文件—&gt;属性—&gt;安全—&gt;编辑一个用户—&gt;设置全部权限—&gt;然后本文件夹授予本用户</p></li>
+<li><p>最好整个项目文件夹这样设置，这样都有了权限了</p></li>
+</ul>
+
+
+
+<h2 id="部署成功后问题">部署成功后问题：</h2>
+
+
+
+<h3 id="xml文件无法读取导致页面字段英文">.xml文件无法读取，导致页面字段英文</h3>
+
+<ul><li><p>vs 2019中找到.xml文件右键—&gt;属性—&gt;改成始终复制即可</p></li>
+<li><p>或者将文件夹整体放到发布后的文件夹中   <code>慎用</code></p></li>
+</ul>
+
+
+
+<h3 id="绑定本地域名和ip">绑定本地域名和IP</h3>
+
+<blockquote>
+  <p>对hosts文件无修改权限</p>
+</blockquote>
+
+<ul><li><p>路径：C:\Windows\System32\drivers\etc\hosts</p></li>
+<li><p>登录Micosoft账号，给当前账号全部权限，然后即可编辑此配置文件</p></li>
+<li><p>配置内容：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs css"><div class="hljs-line">    127<span class="hljs-selector-class">.0</span><span class="hljs-selector-class">.0</span><span class="hljs-selector-class">.1</span>   <span class="hljs-selector-tag">xxx</span><span class="hljs-selector-class">.com</span>
+</div></code></pre>
+
+<ul><li><p>然后到IIS部署页面右上角点击绑定，将IP和域名设置同上即可</p></li>
+</ul>
+
+
+
+<h3 id="至此浏览器输入httpxxxcom3060即可访问网站了">至此，浏览器输入：<code>http://xxx.com:3060</code>即可访问网站了</h3>
+
+<ul><li><p>3060是设置好的端口号</p></li>
+</ul></div></body></html>
