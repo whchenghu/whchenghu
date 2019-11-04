@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- <script src="./vue.js"></script> -->
+    <title>Document</title>
+    <style>
+        [v-cloak] {
+            display: none !important;
+        }
+        
+        .title {
+            border: 1px solid #e6e6e6;
+            margin: 10px 10px;
+            padding: 10px 10px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+        
+        .tip {
+            background: #e6e6e6;
+            margin: 10px 10px;
+            padding: 10px 10px;
+        }
+        
+        .button {
+            background: #ccc;
+            padding: 5px 5px;
+        }
+        
+        .first-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .coding {
+            background: #FF1493;
+            color: white;
+            padding: 2px 6px;
+        }
+        
+        .second-title {
+            margin: 8px 8px;
+        }
+        
+        .out {
+            width: 200px;
+            height: 100px;
+            text-align: center;
+            border: 1px solid #aaa;
+            margin: auto;
+        }
+        
+        .red {
+            color: red;
+        }
+        
+        .big {
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="title">
+            <div class="first-title">1. 创建vue实例初体验</div>
+            <p>{{msg}}</p>
+        </div>
+        <div class="title">
+            <div class="first-title">2. 基础指令：</div>
+            <div class="second-title">2.1 <span class="coding">v-cloak</span>：能够解决插值表达式{{}}闪烁问题</div>
+            <div class="tip">
+                <ol type="1">
+                    <div>问题重现：</div>
+                    <li>引用远程vue.js并放在js代码上面</li>
+                    <li>浏览器NetWork找到online调到Slow 3G</li>
+                    <li><span clas class="button">Shift</span> + <span class="button">F5</span> 刷新页面即可看到</li>
+                </ol>
+            </div>
+            <div v-cloak>{{msg}}</div>
+            <hr color="#e6e6e6" />
+
+            <div class="second-title">2.2 <span class="coding">v-text</span>：他是v-cloak和{{}}之和</div>
+            <div class="tip">
+                <ol type="1">
+                    <li>v-text会把元素中原内容覆盖，而{{}}只会替换占位符，这就是两者都存在的意义吧</li>
+                    <li>v-text和{{}}都会把内容当作普通文本来渲染</li>
+                </ol>
+            </div>
+            <p v-text="text"></p>
+            <p>{{text}}</p>
+            <hr color="#e6e6e6" />
+
+            <div class="second-title">2.3 <span class="coding">v-html</span>：在v-text基础上渲染文本中html标签</div>
+            <p v-html="text"></p>
+            <hr color="#e6e6e6" />
+
+            <div class="second-title">2.4 <span class="coding">v-bind</span>：用于绑定标签中属性</div>
+            <div class="tip">
+                <div>简写：直接在属性前加冒号即可</div>
+            </div>
+            <button v-bind:title="bindmsg+'...拼接的'">鼠标放上去，不要点击</button>
+            <button :title="bindmsg+'...拼接的'">鼠标放上去，不要点击</button>
+            <hr color="#e6e6e6" />
+
+            <div class="second-title">2.5 <span class="coding">v-on</span>：绑定标签中事件</div>
+            <div class="tip">
+                <div>跟v-bind对应,不过他的事件方法写到methods中</div>
+                <div>简写：直接在属性前加艾特符号即可</div>
+                <div class="red">写法上，事件名称后面加不加括号都一样，唯一不同的是，加了括号可以传参，不需要传参时，不加即可</div>
+            </div>
+            <button v-on:click="show">v-on:click绑定事件</button>
+            <button @click="show">@click绑定事件</button>
+        </div>
+        <div class="title">
+            <div class="first-title">3. 事件修饰符</div>
+            <div class="second-title">3.1 <span class="coding">v-on</span>和事件修饰符：</div>
+            <div class="tip">
+                <ol type="1">
+                    <div>事件修饰符：</div>
+                    <li>.stop阻止冒泡:在内部事件上加，如果不加，会先触发内部再外部</li>
+                    <li>.prevent阻止默认事件(比如阻止a标签跳转到href，而是执行click事件)</li>
+                    <li>.capture添加事件侦听器时使用事件捕获模式:在外部加，点击内部事件，先触发外部再内部</li>
+                    <li>.self只当事件在该元素本身触发时触发回调:在外部加，点击内部也不触发外部事件，只有点击自己才会触发</li>
+                    <li>.once事件只触发一次</li>
+                    <div>.self只会阻止自身上的冒泡行为，并不会阻止外部的</div>
+                </ol>
+            </div>
+            <div class="out" @click="outt">
+                <button @click.stop="inn">内部按钮</button>
+            </div>
+            <div class="out" @click.capture="outt">
+                <button @click="inn">内部按钮</button>
+            </div>
+            <a href="http://www.baidu.com" @click.prevent="baidu">百度一下</a>
+        </div>
+
+        <div class="title">
+            <div class="first-title">4. 双向数据绑定</div>
+            <div class="second-title">4.1 <span class="coding">v-model</span>和双向数据绑定：</div>
+            <div class="tip">
+                <div>v-model只能用在表单元素：input、select、checkbox、textarea.....</div>
+                <div>v-bind只能实现数据的单向绑定(m--->v)</div>
+                <div>v-model既可以实现m--->v，也可以实现v--->m，即表单元素和Model中数据的双向绑定</div>
+            </div>
+            <div v-html="modeltext"></div>
+            <input type="text" v-model="modeltext">
+            <div class="clal">
+                <input type="number" v-model="n1">
+                <select v-model="opt">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="*">*</option>
+                    <option value="/">/</option>
+                </select>
+                <input type="number" v-model="n2">
+                <button @click="sum">=</button>
+                <input type="number" v-model="res">
+            </div>
+        </div>
+
+        <div class="title">
+            <div class="first-title">5. vue中绑定样式（v-bind:class...）：在class中写样式</div>
+            <div class="red big">原生更简单.... ： class="red big"</div>
+            <div :class="['red','big']">直接传递一个数组 : v-bind:class="['red','big']"</div>
+            <div :class="['red',flag?'big':'']">使用三元表达式(flag是变量) : :class="['red',flag?'big':'']"</div>
+            <div :class="['red',{'big':flag2}]">使用对象来代替三元表达式，提高代码可读性 : :class="['red',{'big':flag2}]"</div>
+            <div :class="{red:true,big:true}">直接使用一个对象，对象的属性是类名，属性值是变量(标识符) ： :class="{red:true,big:true}"</div>
+            <div :class="classs">整个类名就是一个标识符,即标识符变量中放了一个上面的对象</div>
+        </div>
+
+        <div class="title">
+            <div class="first-title">6. 内联样式（v-bind:style...）：在style中写样式</div>
+            <div class="tip">
+                <div>直接在元素上通过<span class="coding">:style</span>的形式，书写样式对象</div>
+            </div>
+            <div :style="{color:'blue',fontWeight:'bold',fontSize:'34px'}">style内联样式</div>
+            <div :style="stylee">将样式写到标识符变量中</div>
+            <div :style="[s1,s2]">多个标识符组成一个数组也可以</div>
+        </div>
+
+        <div class="title">
+            <div class="first-title">7. 指令：<span class="coding">v-for</span>和key属性</div>
+            <div class="tip">
+                <ol type="1">
+                    <li>在组件中使用v-for时，key时必须要写的（唯一身份）</li>
+                    <li>迭代数组、对象、对象数组、数字</li>
+                </ol>
+            </div>
+            <div v-for="i in arr">{{i}}</div>
+            <div v-for="(a,i) in arr">{{i}}(索引)---{{a}}(值)</div>
+            <div v-for="(val,key,index) in arr2">{{val}}---{{key}}---{{index}}</div>
+            <div v-for="v in arr3">key：{{v.key}}，name:{{v.name}}</div>
+            <div v-for="(v,i) in 3">{{i}}：{{v}}</div>
+
+            <div class="tip">
+                <div>如下：当添加使用push()添加选项时，没有问题</div>
+                <div>当使用unshift()添加选项时，原选中第几个还是第几个，但是内容向下移了一位，造成选择错位</div>
+                <div>解决上面的问题，v-for时添加唯一身份key</div>
+                <div>key只能时字符串/数字，且他里面写的是标识符变量，所以还需要用v-bind来绑定</div>
+            </div>
+            Id:<input type="text" v-model="id"> Name:<input type="text" v-model="name">
+            <button @click="add">添加</button>
+            <div v-for="i in arr4" v-bind:key="i.id">
+                <input type="checkbox">
+                <span>{{i.id}}---{{i.name}}</span>
+            </div>
+        </div>
+
+        <div class="title">
+            <div class="first-title">8. 指令：<span class="coding">v-if</span>和<span class="coding">v-show</span>：效果一样，但是实现效果的方式不同</div>
+            <div class="tip">
+                <div>v-if是每次都删除和重新创建元素</div>
+                <div>v-show不会对DOM进行增删操作，只是在元素属性中添加display="none"</div>
+                <div>综上，v-if有较高的切换性能消耗，v-show有较高的初始渲染消耗</div>
+                <div>频繁切换时，不要用v-if，但元素被显示出来的可能很小时，采用v-if</div>
+            </div>
+            <div>
+                <button @click="setisshow">改变标识符isshow：写一个方法操作标识符</button>
+                <button @click="isshow=!isshow">改变标识符isshow：直接写：@click="isshow=!isshow"</button>
+            </div>
+            <div v-if="isshow">v-if控制的元素</div>
+            <div v-show="isshow">v-show控制的元素</div>
+        </div>
+
+        <div class="title">
+            <div class="first-title">9. vue中样式</div>
+            <div class="second-title">9.1</div>
+            <div class="tip">
+                <ol type="1">
+
+                </ol>
+            </div>
+        </div>
+
+        <div class="title">
+            <div class="first-title">10. vue中样式</div>
+            <div class="second-title">10.1</div>
+            <div class="tip">
+                <ol type="1">
+
+                </ol>
+            </div>
+        </div>
+
+        <div style="height:400px"></div>
+    </div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                msg: "hello 4han!",
+                text: "<div>不渲染</div>",
+                bindmsg: "这是bind提供的",
+                modeltext: "双向数据绑定",
+                n1: 0,
+                n2: 0,
+                res: 0,
+                opt: "+",
+                flag: false,
+                flag2: true,
+                classs: {
+                    red: true,
+                    big: true
+                },
+                stylee: {
+                    color: 'blue',
+                    fontWeight: 'bold',
+                    fontSize: '34px'
+                },
+                s1: {
+                    color: 'pink'
+                },
+                s2: {
+                    fontSize: '34px'
+                },
+                arr: ["数组", 1, 2, 8, 98],
+                arr2: {
+                    key: "对象",
+                    name: "张三",
+                    age: 3,
+                    sex: "女"
+                },
+                id: "",
+                name: "",
+                arr3: [{
+                    key: "对象数组",
+                    name: "hjhhh"
+                }, {
+                    key: "对象数组",
+                    name: "hjhhh"
+                }],
+                arr4: [{
+                    id: 1,
+                    name: "张三丰"
+                }, {
+                    id: 2,
+                    name: "李四王"
+                }, {
+                    id: 3,
+                    name: "王五类"
+                }, {
+                    id: 4,
+                    name: "赵六六"
+                }, ],
+                isshow: true,
+            },
+            methods: {
+                show: function() {
+                    alert("v-on绑定的事件方法");
+                },
+                outt() {
+                    console.log("外部事件")
+                },
+                inn() {
+                    console.log("内部事件")
+                },
+                baidu() {
+                    console.log("@click.prevent阻止默认行为")
+                },
+                sum() {
+                    var n1 = +this.n1;
+                    var n2 = +this.n2;
+                    switch (this.opt) {
+                        case "+":
+                            this.res = n1 + n2;
+                            break;
+                        case "-":
+                            this.res = n1 - n2;
+                            break;
+                        case "*":
+                            this.res = n1 * n2;
+                            break;
+                        default:
+                            this.res = n1 / n2;
+                            break;
+                    }
+                    // this.res = eval(n1 + this.opt + n2);
+                },
+                add() {
+                    // this.arr4.push({
+                    //     id: this.id,
+                    //     name: this.name
+                    // });
+                    var rr = [];
+                    this.arr4.map((i) => {
+                        rr.push(i.id);
+                    });
+                    if (rr.indexOf(this.id) > -1) {
+                        console.log("id不能重复！");
+                    } else {
+                        this.arr4.unshift({
+                            id: this.id,
+                            name: this.name
+                        });
+                    }
+                },
+                setisshow() {
+                    this.isshow = !this.isshow;
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
