@@ -1,0 +1,138 @@
+<!DOCTYPE html><html><head><title>字段名为保留字时的报错及解决办法</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><ul>
+<li><a href="#字段名为保留字时的报错及解决办法">字段名为保留字时的报错及解决办法</a><ul>
+<li><ul>
+<li><a href="#需求修改员工信息时后台需要通过员工的id在departmentuser表中找到属于该员工的这条信息并修改保存">需求：修改员工信息时，后台需要通过员工的id在DepartmentUser表中找到属于该员工的这条信息并修改保存</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<h2 id="字段名为保留字时的报错及解决办法">字段名为保留字时的报错及解决办法</h2>
+
+<blockquote>
+  <p>员工所属部门表中有一个对象字段，如下</p>
+</blockquote>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs vala"><div class="hljs-line"><span class="hljs-class"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Dreisi</span>.<span class="hljs-title">Models</span></span>
+</div><div class="hljs-line"><span class="hljs-class"></span>{
+</div><div class="hljs-line">    <span class="hljs-comment">/// &lt;summary&gt;</span>
+</div><div class="hljs-line">    <span class="hljs-comment">/// 员工所属部门</span>
+</div><div class="hljs-line">    <span class="hljs-comment">/// &lt;/summary&gt;</span>
+</div><div class="hljs-line">    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DepartmentUser</span> : <span class="hljs-title">ModelBase</span>, <span class="hljs-title">IModel</span></span>
+</div><div class="hljs-line"><span class="hljs-class">    </span>{
+</div><div class="hljs-line">        <span class="hljs-comment">/// &lt;summary&gt;</span>
+</div><div class="hljs-line">        <span class="hljs-comment">/// 部门Id</span>
+</div><div class="hljs-line">        <span class="hljs-comment">/// &lt;/summary&gt;</span>
+</div><div class="hljs-line">        [HColumn]
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> DeptId { <span class="hljs-keyword">set</span>; <span class="hljs-keyword">get</span>; }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-comment">/// &lt;summary&gt;</span>
+</div><div class="hljs-line">        <span class="hljs-comment">/// 员工</span>
+</div><div class="hljs-line">        <span class="hljs-comment">/// &lt;/summary&gt;</span>
+</div><div class="hljs-line">        [HColumn]
+</div><div class="hljs-line">        [ModelData(<span class="hljs-string">"prop"</span>,<span class="hljs-string">"Id"</span>)]
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> UserView User { <span class="hljs-keyword">set</span>; <span class="hljs-keyword">get</span>; }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">        <span class="hljs-comment">/// &lt;summary&gt;</span>
+</div><div class="hljs-line">        <span class="hljs-comment">/// 员工Id</span>
+</div><div class="hljs-line">        <span class="hljs-comment">/// &lt;/summary&gt;</span>
+</div><div class="hljs-line">        [HColumn]
+</div><div class="hljs-line">        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> UserId { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<ul><li><p>UserId是因为问题无法解决而不得已才加上的….</p></li>
+</ul>
+
+<h4 id="需求修改员工信息时后台需要通过员工的id在departmentuser表中找到属于该员工的这条信息并修改保存">需求：修改员工信息时，后台需要通过员工的id在DepartmentUser表中找到属于该员工的这条信息并修改保存</h4>
+
+<ul><li><p>此时，变成了通过UserId在此表中找找到对应一条记录</p></li>
+</ul>
+
+<blockquote>
+  <p>第一次尝试：</p>
+</blockquote>
+
+<pre class="prettyprint hljs-dark"><code class="hljs javascript"><div class="hljs-line"><span class="hljs-keyword">var</span> deptUser = db.GetModel&lt;DepartmentUser&gt;(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.User.UserId == model.UserId);
+</div></code></pre>
+
+<ul><li><p>此时会报错：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs sql"><div class="hljs-line">Cannot <span class="hljs-keyword">call</span> methods <span class="hljs-keyword">on</span> nvarchar. // 无法对<span class="hljs-keyword">nvarchar</span>调用方法
+</div></code></pre>
+
+<blockquote>
+  <p>第二次尝试：</p>
+</blockquote>
+
+<ul><li><p>根据很久之前一篇<a href="https://whchenghu.github.io/md/LinkEntityClass.html" target="_blank">文章</a>发现一种新写法：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs haxe"><div class="hljs-line"><span class="hljs-keyword">var</span> deptUser = db.GetModel&lt;DepartmentUser&gt;(<span class="hljs-keyword">new</span> <span class="hljs-type">Field</span>(<span class="hljs-string">"User"</span>) == model.UserId);
+</div></code></pre>
+
+<ul><li><p>依然报错：</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs delphi"><div class="hljs-line">Incorrect syntax <span class="hljs-keyword">near</span> the keyword <span class="hljs-string">'User'</span>. <span class="hljs-comment">// 关键字“User”附近的语法不正确。</span>
+</div></code></pre>
+
+<ul><li><p>没有看懂报错，无法解决，只能改变解决问题的策略</p></li>
+</ul>
+
+<blockquote>
+  <p>最后的妥协：改变策略：添加字段 <br>
+  加一个字段UserId，反正重写了Save方法，每次新增时，给该字段手动赋值即可，然后写成下面这样就行了</p>
+</blockquote>
+
+<pre class="prettyprint hljs-dark"><code class="hljs javascript"><div class="hljs-line"><span class="hljs-keyword">var</span> deptUser = db.GetModel&lt;DepartmentUser&gt;(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.UserId == model.UserId);
+</div></code></pre>
+
+<ul><li><p>就这样解决了。。。。</p></li>
+</ul>
+
+<blockquote>
+  <p>最后主管给我完满解决了这一问题： <br>
+  后来，才知道这种错误是因为我的字段名是保留字，是关键字啊。。。。 <br>
+  然后改成如下即可解决问题，也不需要加字段那种愚蠢的方法了！</p>
+</blockquote>
+
+<pre class="prettyprint hljs-dark"><code class="hljs haxe"><div class="hljs-line"><span class="hljs-keyword">var</span> deptUser = db.GetModel&lt;DepartmentUser&gt;(<span class="hljs-keyword">new</span> <span class="hljs-type">Field</span>(<span class="hljs-string">"[User]"</span>) == model.UserId);
+</div></code></pre>
+
+<ul><li><p>直接加个中括号就行了！再或者调用底层中方法来解决这个问题。。。</p></li>
+</ul>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="hljs haxe"><div class="hljs-line"><span class="hljs-keyword">var</span> deptUser = db.GetModel&lt;DepartmentUser&gt;(<span class="hljs-keyword">new</span> <span class="hljs-type">Field</span>(db.SqlDialect.Warp(<span class="hljs-string">"User"</span>)) == model.UserId);
+</div></code></pre>
+
+<ul><li><p>方法Warp()：用特定的标签包装表名或列名</p></li>
+</ul>
+
+<blockquote>
+  <p>最后：其实我也知道有保留字，但是就是想不到这个点，不知道真正的错因，就像瞎子摸大象一样！</p>
+</blockquote></div></body></html>
